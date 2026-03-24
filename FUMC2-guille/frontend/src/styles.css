@@ -1,0 +1,101 @@
+/* Global Styles */
+:root {
+  --fumc-blue: #0056b3;
+  --fumc-blue-dark: #003d80;
+  --fumc-blue-light: #e3f2fd;
+  --fumc-fuchsia: #d63384;
+  --fumc-green: #198754;
+  --fumc-gray: #6c757d;
+  --fumc-gray-light: #f8f9fa;
+  --fumc-background: #d3d7db;
+  /* Darker gray for better contrast */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--fumc-background);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--fumc-gray-light);
+  color: var(--fumc-blue-dark);
+  font-weight: 600;
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--fumc-blue);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--fumc-blue-dark);
+}
+
+.btn-secondary {
+  background-color: var(--fumc-gray);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Form Styles */
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
