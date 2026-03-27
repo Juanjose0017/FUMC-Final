@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Process {
     id?: number;
@@ -14,7 +15,7 @@ export interface Process {
     providedIn: 'root'
 })
 export class ProcessService {
-    private apiUrl = 'http://localhost:8080/api/processes';
+    private apiUrl = `${environment.apiUrl}/api/processes`;
 
     constructor(private http: HttpClient) { }
 

@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:8080/api/auth';
+    private apiUrl = `${environment.apiUrl}/api/auth`;
     private currentUserSubject = new BehaviorSubject<any>(null);
     public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -48,29 +49,29 @@ export class AuthService {
     }
 
     getUsers(): Observable<any[]> {
-        return this.http.get<any[]>(`http://localhost:8080/api/users`, { headers: this.getHeaders() });
+        return this.http.get<any[]>(`${environment.apiUrl}/api/users`, { headers: this.getHeaders() });
     }
 
     updateUserRole(userId: number, role: string): Observable<any> {
-        return this.http.put<any>(`http://localhost:8080/api/users/${userId}/role`, { role }, { headers: this.getHeaders() });
+        return this.http.put<any>(`${environment.apiUrl}/api/users/${userId}/role`, { role }, { headers: this.getHeaders() });
     }
 
 
     deleteUser(userId: number): Observable<void> {
-        return this.http.delete<void>(`http://localhost:8080/api/users/${userId}`, { headers: this.getHeaders() });
+        return this.http.delete<void>(`${environment.apiUrl}/api/users/${userId}`, { headers: this.getHeaders() });
     }
 
     // Registration Token Management
     generateRegistrationToken(): Observable<any> {
-        return this.http.post<any>('http://localhost:8080/api/admin/tokens/generate', {}, { headers: this.getHeaders() });
+        return this.http.post<any>(`${environment.apiUrl}/api/admin/tokens/generate`, {}, { headers: this.getHeaders() });
     }
 
     getRegistrationTokens(): Observable<any[]> {
-        return this.http.get<any[]>('http://localhost:8080/api/admin/tokens', { headers: this.getHeaders() });
+        return this.http.get<any[]>(`${environment.apiUrl}/api/admin/tokens`, { headers: this.getHeaders() });
     }
 
     deleteRegistrationToken(tokenId: number): Observable<any> {
-        return this.http.delete<any>(`http://localhost:8080/api/admin/tokens/${tokenId}`, { headers: this.getHeaders() });
+        return this.http.delete<any>(`${environment.apiUrl}/api/admin/tokens/${tokenId}`, { headers: this.getHeaders() });
     }
 
     private getHeaders(): HttpHeaders {
