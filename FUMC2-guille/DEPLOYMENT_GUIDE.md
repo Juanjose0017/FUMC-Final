@@ -25,7 +25,7 @@
 ```
 ┌─────────────────────────────────────────────────────┐
 │              WINDOWS SERVER 2025                     │
-│              IP: 192.168.101.10                      │
+│              IP: 192.168.1.81                      │
 │                                                      │
 │  ┌──────────────────────────────────────────────┐   │
 │  │           APACHE TOMCAT 10.1                  │   │
@@ -52,11 +52,11 @@
 |---|---|---|
 | Backend | Spring Boot | 3.2.3 |
 | Frontend | Angular | 17 |
-| Base de datos | PostgreSQL | 16+ |
-| Servidor web | Apache Tomcat | 10.1.x |
+| Base de datos | PostgreSQL | 18 |
+| Servidor web | Apache Tomcat | 10.1.53 |
 | JDK | Java (Eclipse Temurin) | 17 LTS |
-| Build tool | Apache Maven | 3.9+ |
-| Node.js | (solo para build) | 18+ LTS |
+| Build tool | Apache Maven | 3.9.14 |
+| Node.js | (solo para build) | 24.14.1 LTS |
 
 ---
 
@@ -241,7 +241,7 @@ Las credenciales deben coincidir con el archivo `application.properties` del bac
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/performance_db
 spring.datasource.username=postgres
-spring.datasource.password=1234
+spring.datasource.password=C0nsult0ri26**
 ```
 
 > ⚠️ Si la contraseña de PostgreSQL es diferente a `1234`, editar el archivo `application.properties` antes de compilar.
@@ -263,7 +263,7 @@ Los siguientes cambios ya fueron aplicados al código fuente:
 - Se sobreescribe el método `configure()`
 
 **`backend/src/main/java/com/app/security/SecurityConfig.java`:**
-- CORS actualizado para permitir `192.168.101.10:8080`
+- CORS actualizado para permitir `192.168.1.81:8080`
 
 ### 6.2 Compilar
 
@@ -303,7 +303,7 @@ export const environment = {
 ```typescript
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.101.10:8080/performance-management'
+  apiUrl: 'http://192.168.1.81:8080/performance-management'
 };
 ```
 

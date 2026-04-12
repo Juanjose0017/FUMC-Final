@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.101.10:8080/performance-management'
+  // Ruta relativa: funciona desde localhost y desde 192.168.1.81
+  apiUrl: '/performance-management'
 };
