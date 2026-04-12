@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/tokens")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://192.168.1.81:4200")
 public class RegistrationTokenController {
 
     @Autowired
@@ -67,10 +67,14 @@ public class RegistrationTokenController {
                 .orElseThrow(() -> new RuntimeException("Token no encontrado"));
 
         if (token.getUsed()) {
-            return ResponseEntity.badRequest().body("No se pudo eliminar el token");
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "No se pudo eliminar el token porque ya fue usado");
+            return ResponseEntity.badRequest().body(error);
         }
 
         tokenRepository.delete(token);
-        return ResponseEntity.ok().body("Token eliminado exitosamente");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Token eliminado exitosamente");
+        return ResponseEntity.ok().body(response);
     }
 }

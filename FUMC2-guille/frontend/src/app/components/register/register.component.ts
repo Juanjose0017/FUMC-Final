@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -325,7 +326,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
   ) {
     this.registerForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -350,7 +352,7 @@ export class RegisterComponent {
         },
         error: (err) => {
           this.isSubmitting = false;
-          alert('❌ Error en el registro: ' + (err.error || 'Intente nuevamente'));
+          this.notify.showToast('error', 'Error en el registro', err.error || 'Intente nuevamente');
         }
       });
     }

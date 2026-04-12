@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcessService, Process } from '../../services/process.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-phase1',
@@ -112,10 +113,10 @@ import { ProcessService, Process } from '../../services/process.service';
                 <td class="actions-column">
                   <div class="action-buttons">
                     <button (click)="moveActivity(activity, 'EXTRALABORAL')" class="btn-icon-move" title="Mover a Extralaborales">
-                      ⬇️
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </button>
                     <button (click)="deleteActivity(activity.id)" class="btn-icon-danger" title="Eliminar">
-                      🗑️
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                     </button>
                   </div>
                 </td>
@@ -172,10 +173,10 @@ import { ProcessService, Process } from '../../services/process.service';
                 <td class="actions-column">
                   <div class="action-buttons">
                     <button (click)="moveActivity(activity, 'LABORAL')" class="btn-icon-move" title="Mover a Laborales">
-                      ⬆️
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                     </button>
                     <button (click)="deleteActivity(activity.id)" class="btn-icon-danger" title="Eliminar">
-                      🗑️
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                     </button>
                   </div>
                 </td>
@@ -302,29 +303,43 @@ import { ProcessService, Process } from '../../services/process.service';
     }
 
     .btn-icon-move {
-      background: none;
-      border: none;
+      background: #eff6ff;
+      color: var(--fumc-blue);
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 1.25rem;
-      padding: 0.25rem;
-      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      transition: all 0.2s;
     }
 
     .btn-icon-move:hover {
-      transform: scale(1.2) translateY(-2px);
+      background: #dbeafe;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
     }
 
     .btn-icon-danger {
-      background: none;
-      border: none;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 1.25rem;
-      padding: 0.25rem 0.5rem;
-      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      transition: all 0.2s;
     }
 
     .btn-icon-danger:hover {
-      transform: scale(1.2);
+      background: #fee2e2;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
     }
 
     .badge {
@@ -388,7 +403,10 @@ export class Phase1Component implements OnInit {
 
   processes: Process[] = [];
 
-  constructor(private processService: ProcessService) { }
+  constructor(
+    private processService: ProcessService,
+    private notify: NotificationService
+  ) { }
 
   ngOnInit() {
     if (!this.form.fechaInicio) {
@@ -425,29 +443,51 @@ export class Phase1Component implements OnInit {
 
   addLaboralActivity() {
     if (this.laboralActivities.length >= 20) {
-      const continueAdding = confirm('Ha alcanzado el límite sugerido de 20 actividades laborales. ¿Está seguro que desea agregar más actividades?');
-      if (!continueAdding) {
-        return;
-      }
+      this.notify.showConfirm(
+        'Límite Sugerido Alcanzado',
+        'Ha alcanzado el límite sugerido de 20 actividades laborales. ¿Está seguro que desea agregar más actividades?',
+        'warning',
+        'Agregar De Todas Formas',
+        () => {
+          this.executeAddLaboral();
+        }
+      );
+    } else {
+      this.executeAddLaboral();
     }
+  }
+  
+  private executeAddLaboral() {
     if (this.newLaboralActivity.description.trim()) {
       this.activityAdded.emit({ ...this.newLaboralActivity });
       this.newLaboralActivity = { description: '', type: 'ESTRATEGICA', activityType: 'LABORAL' };
       this.showAddLaboral = false;
+      this.notify.showToast('success', 'Actividad laboral agregada');
     }
   }
 
   addExtralaboralActivity() {
     if (this.extralaboralActivities.length >= 10) {
-      const continueAdding = confirm('Ha alcanzado el límite sugerido de 10 actividades extralaborales. ¿Está seguro que desea agregar más actividades?');
-      if (!continueAdding) {
-        return;
-      }
+      this.notify.showConfirm(
+        'Límite Sugerido Alcanzado',
+        'Ha alcanzado el límite sugerido de 10 actividades extralaborales. ¿Está seguro que desea agregar más actividades?',
+        'warning',
+        'Agregar De Todas Formas',
+        () => {
+          this.executeAddExtralaboral();
+        }
+      );
+    } else {
+      this.executeAddExtralaboral();
     }
+  }
+
+  private executeAddExtralaboral() {
     if (this.newExtralaboralActivity.description.trim()) {
       this.activityAdded.emit({ ...this.newExtralaboralActivity });
       this.newExtralaboralActivity = { description: '', type: 'ESTRATEGICA', activityType: 'EXTRALABORAL' };
       this.showAddExtralaboral = false;
+      this.notify.showToast('success', 'Actividad extralaboral agregada');
     }
   }
 
@@ -462,9 +502,16 @@ export class Phase1Component implements OnInit {
   }
 
   deleteActivity(id: number) {
-    if (confirm('¿Está seguro de eliminar esta actividad?')) {
-      this.activityDeleted.emit(id);
-    }
+    this.notify.showConfirm(
+      'Eliminar Actividad',
+      '¿Está seguro de eliminar esta actividad?',
+      'danger',
+      'Eliminar',
+      () => {
+        this.activityDeleted.emit(id);
+        this.notify.showToast('success', 'Actividad Eliminada');
+      }
+    );
   }
 
   getTypeLabel(type: string): string {
@@ -478,13 +525,20 @@ export class Phase1Component implements OnInit {
 
   // --- Move Activity Logic ---
   moveActivity(activity: any, targetType: 'LABORAL' | 'EXTRALABORAL') {
-    if (confirm('¿Estás seguro que quieres mover esta actividad?')) {
-      const updatedActivity = {
-        ...activity,
-        activityType: targetType
-      };
-      // Emit the update to the parent container to save to DB
-      this.activityUpdated.emit(updatedActivity);
-    }
+    this.notify.showConfirm(
+      'Mover Actividad',
+      '¿Estás seguro que quieres mover esta actividad?',
+      'info',
+      'Mover',
+      () => {
+        const updatedActivity = {
+          ...activity,
+          activityType: targetType
+        };
+        // Emit the update to the parent container to save to DB
+        this.activityUpdated.emit(updatedActivity);
+        this.notify.showToast('success', 'Actividad movida');
+      }
+    );
   }
 }

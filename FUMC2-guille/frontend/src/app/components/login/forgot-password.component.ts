@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -193,7 +194,8 @@ export class ForgotPasswordComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
   ) {
     this.requestForm = this.fb.group({
       username: ['', Validators.required]
@@ -220,14 +222,14 @@ export class ForgotPasswordComponent {
         next: (res) => {
           this.loading = false;
           this.step = 2;
-          alert('Si el usuario existe, se ha enviado un código a su correo o celular registrado.');
+          this.notify.showToast('info', 'Código Enviado', 'Si el usuario existe, se ha enviado un código a su correo o celular registrado.');
         },
         error: (err) => {
           this.loading = false;
           console.error(err);
           // Show the specific error message from backend if available
           const errorMessage = err.error || 'Error al procesar la solicitud. Verifique el usuario.';
-          alert(errorMessage);
+          this.notify.showToast('error', 'Error', errorMessage);
         }
       });
     }
@@ -241,13 +243,13 @@ export class ForgotPasswordComponent {
       this.authService.resetPassword(code, newPassword).subscribe({
         next: (res) => {
           this.loading = false;
-          alert('Contraseña actualizada exitosamente');
+          this.notify.showToast('success', 'Éxito', 'Contraseña actualizada exitosamente');
           this.router.navigate(['/login']);
         },
         error: (err) => {
           this.loading = false;
           console.error(err);
-          alert('Error al actualizar contraseña. Código inválido o expirado.');
+          this.notify.showToast('error', 'Error', 'Error al actualizar contraseña. Código inválido o expirado.');
         }
       });
     }

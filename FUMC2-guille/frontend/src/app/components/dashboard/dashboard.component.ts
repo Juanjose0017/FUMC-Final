@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FormService } from '../../services/form.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { PhaseIndicatorComponent } from '../shared/phase-indicator.component';
 import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
 import { RoleTranslatePipe } from '../../pipes/role-translate.pipe';
@@ -25,22 +26,28 @@ import { ReportsComponent } from '../reports/reports.component';
         </div>
         <nav class="sidebar-nav">
           <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-            📊 Tablero
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Tablero
           </a>
           <a *ngIf="isAdmin" routerLink="/admin/formats" routerLinkActive="active">
-            🗑️ Formatos
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Formatos
           </a>
           <a *ngIf="isAdmin" routerLink="/admin/users" routerLinkActive="active">
-            👥 Usuarios
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Usuarios
           </a>
           <a *ngIf="isAdmin" routerLink="/admin/processes" routerLinkActive="active">
-            ⚙️ Procesos
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Procesos
           </a>
           <a *ngIf="isAdmin" routerLink="/admin/tokens" routerLinkActive="active">
-            🔑 Códigos de Registro
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            Códigos de Registro
           </a>
           <a *ngIf="isAdmin" routerLink="/admin/reports" routerLinkActive="active">
-            📈 Reportes
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Reportes
           </a>
         </nav>
         <div class="sidebar-footer">
@@ -124,11 +131,13 @@ import { ReportsComponent } from '../reports/reports.component';
               
               <!-- Deleted forms actions -->
               <div *ngIf="currentFilter === 'deleted' && isAdmin" class="deleted-actions" (click)="$event.stopPropagation()">
-                <button (click)="restoreForm(form.id)" class="btn btn-success btn-sm">
-                  ↺ Restaurar
+                <button (click)="restoreForm(form.id)" class="btn-modern-restore">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v6h6"/><path d="M3 13a9 9 0 1 0 3-7.7L3 8"/></svg>
+                  Restaurar
                 </button>
-                <button (click)="permanentlyDeleteForm(form.id)" class="btn btn-danger btn-sm">
-                  🗑️ Eliminar Permanente
+                <button (click)="permanentlyDeleteForm(form.id)" class="btn-modern-delete">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                  Borrar Definitivo
                 </button>
               </div>
             </div>
@@ -262,38 +271,65 @@ import { ReportsComponent } from '../reports/reports.component';
         <div *ngIf="currentView === 'tokens'" class="view-section">
           <h1>Códigos de Registro</h1>
           
-          <div class="card">
+          <div class="card token-generate-card">
             <div class="token-header">
-              <div>
-                <h3>Generar Nuevo Código</h3>
-                <p class="text-secondary">Crea códigos únicos para permitir el registro de nuevos usuarios</p>
+              <div class="token-header-text">
+                <div class="token-header-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                </div>
+                <div>
+                  <h3>Generar Nuevo Código</h3>
+                  <p class="text-secondary">Crea códigos únicos para permitir el registro de nuevos usuarios</p>
+                </div>
               </div>
-              <button (click)="generateToken()" class="btn btn-primary">+ Generar Código</button>
+              <button (click)="generateToken()" class="btn-generate">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Generar Código
+              </button>
             </div>
           </div>
 
-          <div class="card" style="margin-top: 2rem;">
-            <h3>Códigos Generados</h3>
+          <div class="card" style="margin-top: 1.5rem;">
+            <div class="tokens-list-header">
+              <h3>Códigos Generados</h3>
+              <span class="tokens-count">{{ registrationTokens.length }} código{{ registrationTokens.length !== 1 ? 's' : '' }}</span>
+            </div>
             <div class="tokens-list">
-              <div *ngFor="let token of registrationTokens" class="token-item">
-                <div class="token-info">
-                  <div class="token-value" [class.token-used]="token.used">
-                    <span class="token-code">{{ token.token }}</span>
-                    <button (click)="copyToken(token.token)" class="btn-copy" title="Copiar">📋</button>
-                  </div>
-                  <div class="token-meta">
-                    <span>Creado: {{ token.createdAt | date:'short' }}</span>
-                    <span *ngIf="token.used" class="used-badge">✓ Usado por {{ token.usedByUsername }} el {{ token.usedAt | date:'short' }}</span>
-                    <span *ngIf="!token.used" class="available-badge">✓ Disponible</span>
+              <div *ngFor="let token of registrationTokens" class="token-card" [class.token-card-used]="token.used">
+                <div class="token-card-left">
+                  <div class="token-status-indicator" [class.status-available]="!token.used" [class.status-used]="token.used"></div>
+                  <div class="token-card-content">
+                    <div class="token-code-row">
+                      <code class="token-code-display">{{ token.token }}</code>
+                      <span *ngIf="!token.used" class="token-pill token-pill-available">Disponible</span>
+                      <span *ngIf="token.used" class="token-pill token-pill-used">Usado</span>
+                    </div>
+                    <div class="token-meta-row">
+                      <span class="token-meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        {{ token.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                      </span>
+                      <span *ngIf="token.used" class="token-meta-item token-meta-used">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        {{ token.usedByUsername }} · {{ token.usedAt | date:'dd/MM/yyyy' }}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <button (click)="deleteToken(token.id)" class="btn-icon-danger" title="Eliminar">
-                  🗑️
-                </button>
+                <div class="token-card-actions">
+                  <button *ngIf="!token.used" (click)="copyToken(token.token)" class="token-action-btn token-action-copy" title="Copiar código">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  </button>
+                  <button *ngIf="!token.used" (click)="deleteToken(token.id)" class="token-action-btn token-action-delete" title="Eliminar código">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                  </button>
+                </div>
               </div>
             </div>
-            <div *ngIf="registrationTokens.length === 0" class="empty-state">
+            <div *ngIf="registrationTokens.length === 0" class="empty-state-tokens">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
               <p>No hay códigos de registro generados</p>
+              <span class="text-secondary">Genera un código para permitir el registro de nuevos usuarios</span>
             </div>
           </div>
         </div>
@@ -302,6 +338,7 @@ import { ReportsComponent } from '../reports/reports.component';
 
       <!-- Form Preview Modal -->
       <app-form-preview *ngIf="showPreviewModal" [formData]="previewFormData" (closeModal)="closePreviewModal()"></app-form-preview>
+
     </div>
   `,
   styles: [`
@@ -334,6 +371,8 @@ import { ReportsComponent } from '../reports/reports.component';
     }
     .sidebar-nav a:hover { background: var(--fumc-gray-light); color: var(--fumc-blue); }
     .sidebar-nav a.active { background: var(--fumc-blue-light); color: var(--fumc-blue-dark); border-right: 3px solid var(--fumc-blue); }
+    .nav-icon { vertical-align: middle; margin-right: 0.5rem; flex-shrink: 0; }
+    .sidebar-nav a { display: flex; align-items: center; }
     .sidebar-footer { padding: 1.5rem; border-top: 1px solid var(--border-color); }
     .user-profile { display: flex; flex-direction: column; margin-bottom: 1rem; }
     .user-name { font-weight: 600; color: var(--fumc-blue-dark); }
@@ -381,7 +420,14 @@ import { ReportsComponent } from '../reports/reports.component';
     /* Deleted Forms */
     .deleted-form { opacity: 0.8; border-left-color: #dc2626; cursor: default; }
     .deleted-form:hover { transform: none; }
-    .deleted-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); }
+    .deleted-actions { display: flex; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #e2e8f0; }
+
+    .btn-modern-restore { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex: 1; padding: 0.6rem; border: none; border-radius: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+    .btn-modern-restore:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(16, 185, 129, 0.35); }
+    
+    .btn-modern-delete { display: flex; align-items: center; justify-content: center; gap: 0.4rem; flex: 1; padding: 0.6rem; border: none; border-radius: 8px; background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); color: white; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(244, 63, 94, 0.2); }
+    .btn-modern-delete:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(244, 63, 94, 0.35); }
+
     .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
     
     /* User Admin Layout */
@@ -432,20 +478,49 @@ import { ReportsComponent } from '../reports/reports.component';
     .progress-bar-container { width: 100%; height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 0.75rem; overflow: hidden; }
     .progress-bar { height: 100%; background: linear-gradient(90deg, var(--fumc-blue) 0%, #0ea5e9 100%); border-radius: 3px; transition: width 0.3s ease; }
     
-    /* Token Management */
-    .token-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .tokens-list { margin-top: 1.5rem; }
-    .token-item { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 1rem; background: white; transition: all 0.2s; }
-    .token-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .token-info { flex: 1; }
-    .token-value { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
-    .token-code { font-family: 'Courier New', monospace; background: var(--fumc-gray-light); padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; color: var(--fumc-blue-dark); font-weight: 600; }
-    .token-used .token-code { background: #f3f4f6; color: #9ca3af; text-decoration: line-through; }
-    .btn-copy { background: none; border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
-    .btn-copy:hover { background: var(--fumc-blue-light); border-color: var(--fumc-blue); }
-    .token-meta { display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--text-secondary); }
-    .used-badge { color: #dc2626; font-weight: 500; }
-    .available-badge { color: #16a34a; font-weight: 500; }
+    /* Token Management - Redesigned */
+    .token-generate-card { border: 1px solid var(--border-color); }
+    .token-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .token-header-text { display: flex; align-items: center; gap: 1rem; }
+    .token-header-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--fumc-blue), #0ea5e9); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+    .token-header h3 { margin: 0 0 0.25rem 0; }
+    .btn-generate { display: flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, var(--fumc-blue), #0ea5e9); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.25s; box-shadow: 0 2px 8px rgba(0, 86, 179, 0.25); white-space: nowrap; }
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 86, 179, 0.35); }
+    .btn-generate:active { transform: translateY(0); }
+    
+    .tokens-list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .tokens-list-header h3 { margin: 0; }
+    .tokens-count { font-size: 0.8rem; color: var(--text-secondary); background: #f1f5f9; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: 500; }
+    .tokens-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    
+    .token-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border: 1px solid #e2e8f0; border-radius: 10px; background: #fafbfc; transition: all 0.2s ease; }
+    .token-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .token-card-used { opacity: 0.65; background: #f8f9fa; }
+    .token-card-left { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 0; }
+    .token-status-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-available { background: #22c55e; box-shadow: 0 0 6px rgba(34, 197, 94, 0.4); }
+    .status-used { background: #94a3b8; }
+    .token-card-content { flex: 1; min-width: 0; }
+    .token-code-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+    .token-code-display { font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.85rem; color: #1e293b; background: #e2e8f0; padding: 0.3rem 0.75rem; border-radius: 6px; font-weight: 500; letter-spacing: 0.3px; word-break: break-all; }
+    .token-card-used .token-code-display { color: #94a3b8; text-decoration: line-through; background: #f1f5f9; }
+    .token-pill { font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .token-pill-available { background: #dcfce7; color: #15803d; }
+    .token-pill-used { background: #f1f5f9; color: #64748b; }
+    .token-meta-row { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .token-meta-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: #64748b; }
+    .token-meta-used { color: #94a3b8; }
+    
+    .token-card-actions { display: flex; gap: 0.5rem; flex-shrink: 0; margin-left: 1rem; }
+    .token-action-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; color: #64748b; }
+    .token-action-copy:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; }
+    .token-action-delete:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+    .token-action-btn:active { transform: scale(0.92); }
+    
+    .empty-state-tokens { text-align: center; padding: 3rem 1rem; }
+    .empty-state-tokens svg { margin-bottom: 1rem; }
+    .empty-state-tokens p { font-size: 1rem; color: #475569; font-weight: 500; margin: 0 0 0.25rem 0; }
+    .empty-state-tokens span { font-size: 0.85rem; }
     .text-secondary { color: var(--text-secondary); }
     
     /* Advanced Filters */
@@ -483,6 +558,8 @@ export class DashboardComponent implements OnInit {
   deleteFormId: string = '';
   registrationTokens: any[] = [];
 
+
+
   // Getter to determine current view from URL
   get currentView(): 'dashboard' | 'formats' | 'users' | 'reports' | 'processes' | 'tokens' {
     const url = this.router.url;
@@ -509,6 +586,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private formService: FormService,
     private authService: AuthService,
+    private notify: NotificationService,
     private router: Router
   ) { }
 
@@ -592,39 +670,57 @@ export class DashboardComponent implements OnInit {
   }
 
   promoteUser(user: any) {
-    if (confirm(`¿Estás seguro de promover a ${user.username} a Administrador?`)) {
-      this.authService.updateUserRole(user.id, 'ADMIN').subscribe(() => {
-        alert('Usuario promovido exitosamente');
-        this.loadUsers();
-        this.selectedUser = null;
-      });
-    }
+    this.showConfirm(
+      '¿Promover a Administrador?',
+      `El usuario ${user.username} tendrá permisos completos de administrador.`,
+      'warning',
+      'Promover',
+      () => {
+        this.authService.updateUserRole(user.id, 'ADMIN').subscribe(() => {
+          this.showToast('success', 'Usuario promovido', `${user.username} ahora es Administrador`);
+          this.loadUsers();
+          this.selectedUser = null;
+        });
+      }
+    );
   }
 
   revokeAdmin(user: any) {
-    if (confirm(`¿Estás seguro de revocar los permisos de administrador a ${user.username}?`)) {
-      this.authService.updateUserRole(user.id, 'USER').subscribe(() => {
-        alert('Permisos revocados exitosamente');
-        this.loadUsers();
-        this.selectedUser = null;
-      });
-    }
+    this.showConfirm(
+      '¿Revocar permisos de Admin?',
+      `El usuario ${user.username} perderá todos los permisos de administrador.`,
+      'warning',
+      'Revocar',
+      () => {
+        this.authService.updateUserRole(user.id, 'USER').subscribe(() => {
+          this.showToast('success', 'Permisos revocados', `${user.username} ahora es usuario regular`);
+          this.loadUsers();
+          this.selectedUser = null;
+        });
+      }
+    );
   }
 
   deleteUser(user: any) {
-    if (confirm(`¿Estás seguro de eliminar al usuario ${user.username}? Esta acción eliminará todos sus datos y no se puede deshacer.`)) {
-      this.authService.deleteUser(user.id).subscribe({
-        next: () => {
-          alert('Usuario eliminado exitosamente');
-          this.loadUsers();
-          this.selectedUser = null;
-        },
-        error: (err) => {
-          console.error('Error deleting user:', err);
-          alert('Error al eliminar usuario');
-        }
-      });
-    }
+    this.showConfirm(
+      '¿Eliminar usuario?',
+      `Se eliminará a ${user.username} y todos sus datos. Esta acción no se puede deshacer.`,
+      'danger',
+      'Eliminar',
+      () => {
+        this.authService.deleteUser(user.id).subscribe({
+          next: () => {
+            this.showToast('success', 'Usuario eliminado', `${user.username} fue eliminado exitosamente`);
+            this.loadUsers();
+            this.selectedUser = null;
+          },
+          error: (err) => {
+            console.error('Error deleting user:', err);
+            this.showToast('error', 'Error', 'No fue posible eliminar el usuario');
+          }
+        });
+      }
+    );
   }
 
   get filteredForms() {
@@ -708,33 +804,45 @@ export class DashboardComponent implements OnInit {
   }
 
   restoreForm(formId: number) {
-    if (confirm('¿Está seguro de restaurar este formulario?')) {
-      this.formService.restoreForm(formId).subscribe({
-        next: () => {
-          alert('Formulario restaurado exitosamente');
-          this.loadDeletedForms(this.currentPage);
-        },
-        error: (err) => {
-          console.error('Error restoring form:', err);
-          alert('Error al restaurar el formulario');
-        }
-      });
-    }
+    this.showConfirm(
+      '¿Restaurar formulario?',
+      'El formulario volverá a estar disponible en la lista principal.',
+      'warning',
+      'Restaurar',
+      () => {
+        this.formService.restoreForm(formId).subscribe({
+          next: () => {
+            this.showToast('success', 'Formulario restaurado', 'El formulario está disponible nuevamente');
+            this.loadDeletedForms(this.currentPage);
+          },
+          error: (err) => {
+            console.error('Error restoring form:', err);
+            this.showToast('error', 'Error', 'No fue posible restaurar el formulario');
+          }
+        });
+      }
+    );
   }
 
   permanentlyDeleteForm(formId: number) {
-    if (confirm('¿Está seguro de eliminar PERMANENTEMENTE este formulario? Esta acción no se puede deshacer.')) {
-      this.formService.permanentlyDeleteForm(formId).subscribe({
-        next: () => {
-          alert('Formulario eliminado permanentemente');
-          this.loadDeletedForms(this.currentPage);
-        },
-        error: (err) => {
-          console.error('Error permanently deleting form:', err);
-          alert('Error al eliminar permanentemente el formulario');
-        }
-      });
-    }
+    this.showConfirm(
+      '¿Eliminar permanentemente?',
+      'El formulario se eliminará de forma definitiva. Esta acción NO se puede deshacer.',
+      'danger',
+      'Eliminar permanentemente',
+      () => {
+        this.formService.permanentlyDeleteForm(formId).subscribe({
+          next: () => {
+            this.showToast('success', 'Formulario eliminado', 'El formulario fue eliminado permanentemente');
+            this.loadDeletedForms(this.currentPage);
+          },
+          error: (err) => {
+            console.error('Error permanently deleting form:', err);
+            this.showToast('error', 'Error', 'No fue posible eliminar el formulario');
+          }
+        });
+      }
+    );
   }
 
   createNewForm() {
@@ -766,23 +874,29 @@ export class DashboardComponent implements OnInit {
     const id = parseInt(this.deleteFormId, 10);
 
     if (isNaN(id)) {
-      alert('Por favor ingrese un ID válido');
+      this.showToast('warning', 'ID inválido', 'Por favor ingrese un ID numérico válido');
       return;
     }
 
-    if (confirm(`¿Está seguro de eliminar el formato #${this.deleteFormId}? Esta acción no se puede deshacer.`)) {
-      this.formService.deleteForm(id).subscribe({
-        next: () => {
-          alert('Formato eliminado exitosamente');
-          this.deleteFormId = '';
-          this.loadForms();
-        },
-        error: (err) => {
-          console.error('Error deleting form:', err);
-          alert('Error al eliminar el formato. Verifique que el ID sea correcto.');
-        }
-      });
-    }
+    this.showConfirm(
+      '¿Eliminar formato?',
+      `El formato #${this.deleteFormId} será eliminado. Esta acción no se puede deshacer.`,
+      'danger',
+      'Eliminar',
+      () => {
+        this.formService.deleteForm(id).subscribe({
+          next: () => {
+            this.showToast('success', 'Formato eliminado', `El formato #${this.deleteFormId} fue eliminado exitosamente`);
+            this.deleteFormId = '';
+            this.loadForms();
+          },
+          error: (err) => {
+            console.error('Error deleting form:', err);
+            this.showToast('error', 'Error', 'No se pudo eliminar el formato. Verifique que el ID sea correcto.');
+          }
+        });
+      }
+    );
   }
 
   // Form Preview Modal
@@ -814,38 +928,53 @@ export class DashboardComponent implements OnInit {
   generateToken() {
     this.authService.generateRegistrationToken().subscribe({
       next: (token) => {
-        alert(`Código generado exitosamente:\n\n${token.token}\n\nCopie este código y compártalo con el nuevo usuario.`);
+        this.showToast('success', 'Código generado', 'El nuevo código de registro está listo para compartir');
         this.loadTokens();
       },
       error: (err) => {
         console.error('Error generating token:', err);
-        alert('Error al generar el código de registro');
+        this.showToast('error', 'Error', 'No fue posible generar el código de registro');
       }
     });
   }
 
   copyToken(token: string) {
     navigator.clipboard.writeText(token).then(() => {
-      alert('Código copiado al portapapeles');
+      this.showToast('info', 'Código copiado', 'El código fue copiado al portapapeles');
     }).catch(err => {
       console.error('Error copying token:', err);
-      alert('Error al copiar el código');
+      this.showToast('error', 'Error', 'No se pudo copiar el código');
     });
   }
 
   deleteToken(tokenId: number) {
-    if (confirm('¿Está seguro de eliminar este código de registro?')) {
-      this.authService.deleteRegistrationToken(tokenId).subscribe({
-        next: () => {
-          alert('Código eliminado exitosamente');
-          this.loadTokens();
-        },
-        error: (err) => {
-          console.error('Error deleting token:', err);
-          alert('Error al eliminar el código');
-        }
-      });
-    }
+    this.showConfirm(
+      '¿Eliminar código de registro?',
+      'Este código ya no podrá ser utilizado para registrar nuevos usuarios.',
+      'danger',
+      'Eliminar',
+      () => {
+        this.authService.deleteRegistrationToken(tokenId).subscribe({
+          next: () => {
+            this.showToast('success', 'Código eliminado', 'El código de registro fue eliminado exitosamente');
+            this.loadTokens();
+          },
+          error: (err) => {
+            console.error('Error deleting token:', err);
+            this.showToast('error', 'Error', 'No fue posible eliminar el código');
+          }
+        });
+      }
+    );
+  }
+
+  // Delegate to NotificationService
+  showToast(type: any, title: string, message?: string) {
+    this.notify.showToast(type, title, message);
+  }
+
+  showConfirm(title: string, message: string, type: any, confirmText: string, onConfirm: () => void) {
+    this.notify.showConfirm(title, message, type, confirmText, onConfirm);
   }
 
   getFullName(user: any): string {

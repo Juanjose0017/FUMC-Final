@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -168,7 +169,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notify: NotificationService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -180,10 +182,11 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
+          this.notify.showToast('success', 'Bienvenido', 'Inicio de sesión exitoso');
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          alert('Error de inicio de sesión');
+          this.notify.showToast('error', 'Error', 'Credenciales incorrectas');
         }
       });
     }

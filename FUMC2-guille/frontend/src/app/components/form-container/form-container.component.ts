@@ -10,6 +10,7 @@ import { Phase4Component } from '../phases/phase4.component';
 import { Phase5Component } from '../phases/phase5.component';
 import { PhaseIndicatorComponent } from '../shared/phase-indicator.component';
 import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-form-container',
@@ -124,7 +125,9 @@ import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
         
         <!-- Validation Error Messages -->
         <div *ngIf="!canAdvance() && form.currentPhase < 5" class="validation-error">
-          <span class="error-icon">⚠️</span>
+          <span class="error-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
           <span>{{ getValidationMessage() }}</span>
         </div>
         
@@ -363,7 +366,8 @@ export class FormContainerComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private formService: FormService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notify: NotificationService
   ) { }
 
   ngOnInit() {
@@ -504,49 +508,60 @@ export class FormContainerComponent implements OnInit {
 
     const msg = messages[this.form.currentPhase] || '¿Desea continuar?';
 
-    if (confirm(msg)) {
-      this.formService.advancePhase(this.form.id).subscribe({
-        next: (updated) => {
-          this.form = updated;
-        },
-        error: (error) => {
-          console.error('Error advancing phase:', error);
+    this.notify.showConfirm(
+      'Avanzar de Fase',
+      msg,
+      'info',
+      'Continuar',
+      () => {
+        this.formService.advancePhase(this.form.id).subscribe({
+          next: (updated) => {
+            this.form = updated;
+          },
+          error: (error) => {
+            console.error('Error advancing phase:', error);
 
-          // Check if the "error" is actually a valid form object (workaround for potential backend status issue)
-          if (error.error && error.error.id && error.error.currentPhase) {
-            console.log('Treating error response as success because it contains a valid form');
-            this.form = error.error;
-            return;
-          }
-
-          let errorMessage = 'Error desconocido';
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              errorMessage = error.error;
-            } else if (error.error.message) {
-              errorMessage = error.error.message;
-            } else {
-              errorMessage = JSON.stringify(error.error);
+            if (error.error && error.error.id && error.error.currentPhase) {
+              console.log('Treating error response as success because it contains a valid form');
+              this.form = error.error;
+              return;
             }
+
+            let errorMessage = 'Error desconocido';
+            if (error.error) {
+              if (typeof error.error === 'string') {
+                errorMessage = error.error;
+              } else if (error.error.message) {
+                errorMessage = error.error.message;
+              } else {
+                errorMessage = JSON.stringify(error.error);
+              }
+            }
+            this.notify.showToast('error', 'Error', 'Error al avanzar de fase: ' + errorMessage);
           }
-          alert('Error al avanzar de fase: ' + errorMessage);
-        }
-      });
-    }
+        });
+      }
+    );
   }
 
   regressPhase() {
     if (this.form.currentPhase === 2) {
-      if (confirm('¿Desea volver a agregar más actividades? Podrá continuar después.')) {
-        this.formService.regressPhase(this.form.id).subscribe(
-          updated => {
-            this.form = updated;
-          },
-          error => {
-            alert('Error: ' + (error.error || 'No se puede retroceder desde esta fase'));
-          }
-        );
-      }
+      this.notify.showConfirm(
+        'Retroceder',
+        '¿Desea volver a agregar más actividades? Podrá continuar después.',
+        'warning',
+        'Volver',
+        () => {
+          this.formService.regressPhase(this.form.id).subscribe({
+            next: (updated) => {
+              this.form = updated;
+            },
+            error: (error) => {
+              this.notify.showToast('error', 'Error', 'Error: ' + (error.error || 'No se puede retroceder desde esta fase'));
+            }
+          });
+        }
+      );
     }
   }
 
