@@ -10,448 +10,8 @@ Chart.register(...registerables, ChartDataLabels);
   selector: 'app-phase5',
   standalone: true,
   imports: [CommonModule, NgChartsModule],
-  template:`
-    <div class="card">
-      <h3>Fase 5: Resumen de Resultados</h3>
-      <p class="text-secondary">Resultados finales consolidados. Solo lectura.</p>
-
-      <!-- Tabs Navigation -->
-      <div class="tabs-container">
-        <button (click)="setTab('resumen')" [class.active]="currentTab === 'resumen'" class="tab-button">
-          📋 Resumen General
-        </button>
-        <button (click)="setTab('porcentajes')" [class.active]="currentTab === 'porcentajes'" class="tab-button">
-          📊 Distribución Porcentual
-        </button>
-        <button (click)="setTab('graficos')" [class.active]="currentTab === 'graficos'" class="tab-button">
-          📈 Análisis Gráfico
-        </button>
-        <button (click)="setTab('detalle')" [class.active]="currentTab === 'detalle'" class="tab-button">
-          📑 Detalle Completo
-        </button>
-      </div>
-
-      <!-- Tab Content: Resumen General -->
-      <div *ngIf="currentTab === 'resumen'" class="tab-content">
-        <h4 class="section-subtitle">Resumen General</h4>
-        
-        <!-- Laboral Summary -->
-      <h4 class="section-subtitle">Actividades Laborales</h4>
-      <div class="table-responsive">
-        <table>
-          <thead>
-              <tr>
-                  <th>Descripción</th>
-                  <th>Frecuencia</th>
-                  <th>Unidad Frec.</th>
-                  <th>Prioridad</th>
-                  <th>Tiempo (Min)</th>
-                  <th>Min/Día</th>
-                  <th>Min/Semana</th>
-                  <th>Min/Quincena</th>
-                  <th>Min/Mes</th>
-                  <th>Min/Trimestre</th>
-                  <th>Min/Semestre</th>
-                  <th>Min/Anual</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let activity of laboralActivities">
-                  <td>{{ activity.description }}</td>
-                  <td>{{ activity.frequency }}</td>
-                  <td>{{ activity.timeUnit }}</td>
-                  <td>
-                    <span [class]="getPriorityClass(activity.priorityScore)">
-                      {{ activity.priorityScore | number:'1.1-1' }} ({{ getPriorityLabel(activity.priorityScore) }})
-                    </span>
-                  </td>
-                  <td>{{ activity.timeValue }}</td>
-                  <td>{{ calculateTime(activity, 'DIA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'SEMANA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'QUINCENA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'MES') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'TRIMESTRE') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'SEMESTRE') | number:'1.0-0' }}</td>
-                  <td><strong>{{ calculateAnnualTime(activity) | number:'1.0-0' }}</strong></td>
-              </tr>
-              <tr class="total-row">
-                  <td colspan="5" style="text-align: right;"><strong>Total Minutos:</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'DIA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'SEMANA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'QUINCENA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'MES') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'TRIMESTRE') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'SEMESTRE') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('LABORAL', 'ANUAL') | number:'1.0-0' }}</strong></td>
-              </tr>
-              <tr class="total-row">
-                  <td colspan="5" style="text-align: right;"><strong>Total Horas:</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'DIA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'SEMANA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'QUINCENA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'MES')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'TRIMESTRE')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'SEMESTRE')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'ANUAL')) }}</strong></td>
-              </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Extralaboral Activities -->
-      <h4 class="section-subtitle mt-4">Actividades Extralaborales</h4>
-      <div class="table-responsive">
-        <table>
-          <thead>
-              <tr>
-                  <th>Descripción</th>
-                  <th>Frecuencia</th>
-                  <th>Unidad Frec.</th>
-                  <th>Prioridad</th>
-                  <th>Tiempo (Min)</th>
-                  <th>Min/Día</th>
-                  <th>Min/Semana</th>
-                  <th>Min/Quincena</th>
-                  <th>Min/Mes</th>
-                  <th>Min/Trimestre</th>
-                  <th>Min/Semestre</th>
-                  <th>Min/Anual</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let activity of extralaboralActivities">
-                  <td>{{ activity.description }}</td>
-                  <td>{{ activity.frequency }}</td>
-                  <td>{{ activity.timeUnit }}</td>
-                  <td>
-                    <span [class]="getPriorityClass(activity.priorityScore)">
-                      {{ activity.priorityScore | number:'1.1-1' }} ({{ getPriorityLabel(activity.priorityScore) }})
-                    </span>
-                  </td>
-                  <td>{{ activity.timeValue }}</td>
-                  <td>{{ calculateTime(activity, 'DIA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'SEMANA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'QUINCENA') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'MES') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'TRIMESTRE') | number:'1.0-0' }}</td>
-                  <td>{{ calculateTime(activity, 'SEMESTRE') | number:'1.0-0' }}</td>
-                  <td><strong>{{ calculateAnnualTime(activity) | number:'1.0-0' }}</strong></td>
-              </tr>
-              <tr class="total-row">
-                  <td colspan="5" style="text-align: right;"><strong>Total Minutos:</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'DIA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'SEMANA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'QUINCENA') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'MES') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'TRIMESTRE') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'SEMESTRE') | number:'1.0-0' }}</strong></td>
-                  <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'ANUAL') | number:'1.0-0' }}</strong></td>
-              </tr>
-              <tr class="total-row">
-                  <td colspan="5" style="text-align: right;"><strong>Total Horas:</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'DIA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'SEMANA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'QUINCENA')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'MES')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'TRIMESTRE')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'SEMESTRE')) }}</strong></td>
-                  <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'ANUAL')) }}</strong></td>
-              </tr>
-          </tbody>
-        </table>
-      </div>
-      </div>
-
-      <!-- Tab Content: Distribución Porcentual -->
-      <div *ngIf="currentTab === 'porcentajes'" class="tab-content">
-        <h4 class="section-subtitle">Distribución Porcentual por Frecuencia</h4>
-      <p class="text-secondary">Cada grupo de frecuencia suma 100% del tiempo asignado a esa frecuencia</p>
-      
-      <!-- Laboral Percentages by Frequency -->
-      <div class="percentage-section">
-        <h5 class="subsection-title">Actividades Laborales - Porcentajes por Frecuencia</h5>
-        <div *ngFor="let unit of getUniqueFrequencyUnits('LABORAL')" class="frequency-group">
-          <h6 class="frequency-title">{{ unit }}</h6>
-          <div class="table-responsive">
-            <table class="percentage-table">
-              <thead>
-                <tr>
-                  <th>Actividad</th>
-                  <th>Tiempo Anual (Min)</th>
-                  <th>Porcentaje</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let activity of getActivitiesByFrequency(unit, 'LABORAL')">
-                  <td>{{ activity.description }}</td>
-                  <td>{{ calculateAnnualTime(activity) | number:'1.0-0' }}</td>
-                  <td>
-                    <div class="percentage-bar-container">
-                      <div class="percentage-bar" [style.width.%]="getPercentageInFrequencyGroup(activity, 'LABORAL')"></div>
-                      <span class="percentage-text">{{ getPercentageInFrequencyGroup(activity, 'LABORAL') | number:'1.1-1' }}%</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="total-row">
-                  <td><strong>Total {{ unit }}</strong></td>
-                  <td><strong>{{ getFrequencyGroupTotal(unit, 'LABORAL') | number:'1.0-0' }}</strong></td>
-                  <td><strong>100.0%</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Extralaboral Percentages by Frequency -->
-      <div class="percentage-section" *ngIf="getUniqueFrequencyUnits('EXTRALABORAL').length > 0">
-        <h5 class="subsection-title">Actividades Extralaborales - Porcentajes por Frecuencia</h5>
-        <div *ngFor="let unit of getUniqueFrequencyUnits('EXTRALABORAL')" class="frequency-group">
-          <h6 class="frequency-title">{{ unit }}</h6>
-          <div class="table-responsive">
-            <table class="percentage-table">
-              <thead>
-                <tr>
-                  <th>Actividad</th>
-                  <th>Tiempo Anual (Min)</th>
-                  <th>Porcentaje</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let activity of getActivitiesByFrequency(unit, 'EXTRALABORAL')">
-                  <td>{{ activity.description }}</td>
-                  <td>{{ calculateAnnualTime(activity) | number:'1.0-0' }}</td>
-                  <td>
-                    <div class="percentage-bar-container">
-                      <div class="percentage-bar" [style.width.%]="getPercentageInFrequencyGroup(activity, 'EXTRALABORAL')"></div>
-                      <span class="percentage-text">{{ getPercentageInFrequencyGroup(activity, 'EXTRALABORAL') | number:'1.1-1' }}%</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="total-row">
-                  <td><strong>Total {{ unit }}</strong></td>
-                  <td><strong>{{ getFrequencyGroupTotal(unit, 'EXTRALABORAL') | number:'1.0-0' }}</strong></td>
-                  <td><strong>100.0%</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Overall Frequency Distribution Summary -->
-      <h4 class="section-subtitle mt-4">Resumen General - Distribución por Unidad de Frecuencia</h4>
-      <p class="text-secondary">Distribución total del tiempo entre todas las frecuencias (suma 100%)</p>
-      <div class="table-responsive">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th>Unidad de Frecuencia</th>
-              <th>Horas Anuales</th>
-              <th>Porcentaje del Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let freq of getOverallFrequencyPercentages()">
-              <td><strong>{{ freq.unit }}</strong></td>
-              <td>{{ freq.hours | number:'1.1-1' }}</td>
-              <td>
-                <div class="percentage-bar-container">
-                  <div class="percentage-bar overall" [style.width.%]="freq.percentage"></div>
-                  <span class="percentage-text">{{ freq.percentage | number:'1.1-1' }}%</span>
-                </div>
-              </td>
-            </tr>
-            <tr class="grand-total-row">
-              <td colspan="2"><strong>TOTAL GENERAL</strong></td>
-              <td><strong>100.0%</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      </div>
-
-      <!-- Tab Content: Análisis Gráfico -->
-      <div *ngIf="currentTab === 'graficos'" class="tab-content">
-        <h3 class="text-center">Análisis Gráfico</h3>
-        
-        <div class="charts-grid">
-          <div class="chart-container">
-            <h4>Distribución Laboral (Tiempo)</h4>
-            <div class="canvas-wrapper">
-              <canvas baseChart
-                [data]="laboralChartData"
-                [options]="pieChartOptions"
-                [type]="'pie'">
-              </canvas>
-            </div>
-          </div>
-          <div class="chart-container">
-            <h4>Distribución Extralaboral (Tiempo)</h4>
-            <div class="canvas-wrapper">
-              <canvas baseChart
-                [data]="extralaboralChartData"
-                [options]="pieChartOptions"
-                [type]="'pie'">
-              </canvas>
-            </div>
-          </div>
-        </div>
-
-        <div class="chart-container full-width-chart mt-5">
-          <h4>Distribución por Unidad de Frecuencia (Tiempo Total)</h4>
-          <div class="canvas-wrapper">
-            <canvas baseChart
-              [data]="frequencyUnitChartData"
-              [options]="pieChartOptions"
-              [type]="'pie'">
-            </canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab Content: Detalle Completo -->
-      <div *ngIf="currentTab === 'detalle'" class="tab-content">
-        <h4 class="section-subtitle">Detalle Completo de Actividades</h4>
-        <p class="text-secondary">Tablas completas con todos los cálculos detallados por período.</p>
-        
-        <!-- Este tab mostrará las tablas completas que están actualmente en el tab "resumen" -->
-        <!-- Por ahora, redirigimos al usuario al tab resumen para ver los detalles -->
-        <div class="info-box">
-          <p>📊 Las tablas detalladas se encuentran en la pestaña <strong>"Resumen General"</strong>.</p>
-          <p>Esta sección está reservada para futuras expansiones de análisis detallado.</p>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .badge { padding: 0.25rem 0.5rem; background: #eee; border-radius: 4px; font-size: 0.8rem; }
-    .text-secondary { color: var(--text-secondary); margin-bottom: 1rem; }
-    .total-row { background-color: var(--fumc-blue-light); color: var(--fumc-blue-dark); font-size: 0.9rem; }
-    .table-responsive { overflow-x: auto; margin-bottom: 2rem; }
-    
-    /* Tabs Styles */
-    .tabs-container {
-      display: flex;
-      gap: 0.5rem;
-      margin: 1.5rem 0;
-      border-bottom: 2px solid var(--border-color);
-      overflow-x: auto;
-    }
-    
-    .tab-button {
-      padding: 0.75rem 1.5rem;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      cursor: pointer;
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    
-    .tab-button:hover {
-      background: var(--fumc-gray-light);
-      color: var(--fumc-blue-dark);
-    }
-    
-    .tab-button.active {
-      color: var(--fumc-blue);
-      border-bottom-color: var(--fumc-blue);
-      background: var(--fumc-blue-light);
-      font-weight: 600;
-    }
-    
-    .tab-content {
-      animation: fadeIn 0.3s ease-in;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .info-box {
-      background: #f0f9ff;
-      border-left: 4px solid var(--fumc-blue);
-      padding: 1.5rem;
-      border-radius: 6px;
-      margin: 2rem 0;
-    }
-    
-    .info-box p {
-      margin: 0.5rem 0;
-      color: var(--fumc-blue-dark);
-    }
-    
-    .charts-section { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); }
-    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-    .chart-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .canvas-wrapper { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; }
-    .full-width-chart { max-width: 600px; margin: 2rem auto 0; }
-    .text-center { text-align: center; }
-    
-    .section-subtitle { color: var(--fumc-blue-dark); margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 2px solid var(--fumc-blue-light); padding-bottom: 0.5rem; }
-    .mt-4 { margin-top: 2rem; }
-    .mt-5 { margin-top: 3rem; }
-    
-    .priority-high { color: #dc2626; font-weight: bold; }
-    .priority-medium { color: #d97706; font-weight: bold; }
-    .priority-low { color: #16a34a; font-weight: bold; }
-    
-    th { font-size: 0.85rem; white-space: nowrap; }
-    td { font-size: 0.9rem; }
-    
-    /* Percentage Section Styles */
-    .percentage-section { margin-top: 2rem; padding: 1.5rem; background: #f9fafb; border-radius: 8px; }
-    .subsection-title { color: var(--fumc-blue-dark); font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600; }
-    .frequency-group { margin-bottom: 2rem; padding: 1rem; background: white; border-radius: 6px; border-left: 4px solid var(--fumc-blue); }
-    .frequency-title { color: var(--fumc-blue); font-size: 1rem; margin-bottom: 0.75rem; font-weight: 600; }
-    .percentage-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .percentage-table th { background: var(--fumc-blue-light); padding: 0.75rem; text-align: left; }
-    .percentage-table th:nth-child(1) { width: 40%; }
-    .percentage-table th:nth-child(2) { width: 20%; }
-    .percentage-table th:nth-child(3) { width: 40%; }
-    .percentage-table td { padding: 0.75rem; border-bottom: 1px solid #e5e7eb; }
-    .percentage-bar-container { 
-      position: relative; 
-      width: 100%; 
-      height: 30px; 
-      background: #e5e7eb; 
-      border-radius: 4px; 
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-    }
-    .percentage-bar { 
-      position: absolute; 
-      left: 0;
-      top: 0;
-      height: 100%; 
-      background: linear-gradient(90deg, var(--fumc-blue) 0%, #0ea5e9 100%); 
-      transition: width 0.3s ease; 
-    }
-    .percentage-bar.overall { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
-    .percentage-text { 
-      position: relative; 
-      width: 100%; 
-      text-align: center; 
-      line-height: 30px; 
-      font-weight: 600; 
-      color: #1f2937; 
-      z-index: 1; 
-    }
-    .summary-table { width: 100%; border-collapse: collapse; margin-top: 1rem; table-layout: fixed; }
-    .summary-table th { background: var(--fumc-blue-dark); color: white; padding: 1rem; text-align: left; }
-    .summary-table th:nth-child(1) { width: 30%; }
-    .summary-table th:nth-child(2) { width: 25%; }
-    .summary-table th:nth-child(3) { width: 45%; }
-    .summary-table td { padding: 1rem; border-bottom: 1px solid #e5e7eb; }
-    .grand-total-row { background: #dcfce7; font-size: 1.1rem; }
-    .grand-total-row td { border-top: 3px solid var(--fumc-blue); padding: 1rem; }
-  `]
+  templateUrl: './phase5.component.html',
+  styleUrls: ['./phase5.component.css']
 })
 export class Phase5Component implements OnChanges {
   @Input() form: any;
@@ -471,32 +31,35 @@ export class Phase5Component implements OnChanges {
     '#69F0AE', '#B2FF59', '#EEFF41', '#FFFF00', '#FFAB00'
   ];
 
-  public pieChartOptions: ChartConfiguration['options'] | any = {
+  public barChartOptions: ChartConfiguration['options'] | any = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Horas Anuales' }
+      }
+    },
     plugins: {
       legend: {
-        position: 'right',
-        labels: { boxWidth: 15, padding: 15 }
+        display: false
       },
       datalabels: {
-        formatter: (value: any, ctx: any) => {
+        anchor: 'end',
+        align: 'end',
+        formatter: (value: any) => {
           if (value === 0) return '';
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.map((data: number) => { sum += data; });
-          let percentage = (value * 100 / sum).toFixed(1) + "%";
-          return percentage;
+          return value.toFixed(1) + 'h';
         },
-        color: '#fff',
-        font: { weight: 'bold', size: 10 }
+        color: '#4a5568',
+        font: { weight: 'bold', size: 11 }
       }
     }
   };
 
-  public laboralChartData: ChartData<'pie'> = { labels: [], datasets: [{ data: [] }] };
-  public extralaboralChartData: ChartData<'pie'> = { labels: [], datasets: [{ data: [] }] };
-  public frequencyUnitChartData: ChartData<'pie'> = { labels: [], datasets: [{ data: [] }] };
+  public laboralChartData: ChartData<'bar'> = { labels: [], datasets: [{ data: [], label: 'Horas' }] };
+  public extralaboralChartData: ChartData<'bar'> = { labels: [], datasets: [{ data: [], label: 'Horas' }] };
+  public frequencyUnitChartData: ChartData<'bar'> = { labels: [], datasets: [{ data: [], label: 'Horas' }] };
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['form'] && this.form) {
@@ -574,7 +137,7 @@ export class Phase5Component implements OnChanges {
     const laboralData = this.laboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
     this.laboralChartData = {
       labels: laboralLabels,
-      datasets: [{ data: laboralData, backgroundColor: this.warmColors }]
+      datasets: [{ label: 'Horas Anuales', data: laboralData, backgroundColor: this.warmColors }]
     };
 
     // Extralaboral Chart
@@ -582,7 +145,7 @@ export class Phase5Component implements OnChanges {
     const extralaboralData = this.extralaboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
     this.extralaboralChartData = {
       labels: extralaboralLabels,
-      datasets: [{ data: extralaboralData, backgroundColor: this.warmColors }]
+      datasets: [{ label: 'Horas Anuales', data: extralaboralData, backgroundColor: this.warmColors }]
     };
 
     // Frequency Unit Chart
@@ -595,7 +158,7 @@ export class Phase5Component implements OnChanges {
 
     this.frequencyUnitChartData = {
       labels: Object.keys(timeByUnit),
-      datasets: [{ data: Object.values(timeByUnit), backgroundColor: this.warmColors }]
+      datasets: [{ label: 'Horas Anuales', data: Object.values(timeByUnit), backgroundColor: this.warmColors }]
     };
   }
 
@@ -646,5 +209,194 @@ export class Phase5Component implements OnChanges {
       hours: time / 60,
       percentage: totalAnnualTime > 0 ? (time / totalAnnualTime) * 100 : 0
     }));
+  }
+
+  // --- DETALLE COMPLETO LOGIC ---
+  activeFilterType: 'TODAS' | 'LABORAL' | 'EXTRALABORAL' = 'TODAS';
+  activeFilterPriority: 'TODAS' | 'ALTA' | 'MEDIA' | 'BAJA' = 'TODAS';
+
+  getFilteredActivities(): any[] {
+    let activities = [...this.laboralActivities, ...this.extralaboralActivities];
+
+    if (this.activeFilterType !== 'TODAS') {
+      activities = activities.filter(a => a.activityType === this.activeFilterType);
+    }
+
+    if (this.activeFilterPriority !== 'TODAS') {
+      activities = activities.filter(a => {
+        const label = this.getPriorityLabel(a.priorityScore || 0).toUpperCase();
+        return label === this.activeFilterPriority;
+      });
+    }
+
+    return activities;
+  }
+
+  setFilterType(type: 'TODAS' | 'LABORAL' | 'EXTRALABORAL') {
+    this.activeFilterType = type;
+  }
+
+  setFilterPriority(priority: 'TODAS' | 'ALTA' | 'MEDIA' | 'BAJA') {
+    this.activeFilterPriority = priority;
+  }
+
+  getTotalAnnualTimeAll(): number {
+    const all = [...this.laboralActivities, ...this.extralaboralActivities];
+    return all.reduce((sum, a) => sum + this.calculateAnnualTime(a), 0);
+  }
+
+  getActivityImpactPercentage(activity: any): number {
+    const total = this.getTotalAnnualTimeAll();
+    if (total === 0) return 0;
+    return (this.calculateAnnualTime(activity) / total) * 100;
+  }
+
+  printReport() {
+    const laboral = this.laboralActivities;
+    const extralaboral = this.extralaboralActivities;
+    const all = [...laboral, ...extralaboral];
+    const totalAllMin = this.getTotalAnnualTimeAll();
+
+    const priorityStyle = (score: number) => {
+      const label = this.getPriorityLabel(score);
+      const bg = label === 'Alta' ? '#fee2e2' : label === 'Media' ? '#fef3c7' : '#dcfce7';
+      const color = label === 'Alta' ? '#b91c1c' : label === 'Media' ? '#b45309' : '#15803d';
+      return { label, bg, color };
+    };
+
+    const buildRows = (activities: any[]) => activities.map(a => {
+      const annualMin = this.calculateAnnualTime(a);
+      const annualHrs = (annualMin / 60).toFixed(1);
+      const impact = totalAllMin > 0 ? ((annualMin / totalAllMin) * 100).toFixed(1) : '0.0';
+      const p = priorityStyle(a.priorityScore || 0);
+      const barFill = `width:${impact}%;height:8px;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:4px;`;
+      return `<tr>
+        <td>${a.description}</td>
+        <td style="text-align:center">${a.frequency || 0}</td>
+        <td style="text-align:center">${a.timeUnit || '-'}</td>
+        <td style="text-align:center">${a.timeValue || 0} min</td>
+        <td style="text-align:center">${a.importance || 0} / ${a.coherence || 0} / ${a.relevance || 0}</td>
+        <td style="text-align:center"><span style="background:${p.bg};color:${p.color};padding:2px 8px;border-radius:9px;font-weight:700;font-size:9px;">${p.label}</span></td>
+        <td style="text-align:center"><strong>${annualHrs} hrs</strong></td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;"><div style="${barFill}"></div></div>
+            <span style="font-weight:700;font-size:10px;min-width:36px;text-align:right">${impact}%</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const buildSection = (title: string, activities: any[], accentColor: string) => {
+      if (activities.length === 0) return '';
+      const totalMin = activities.reduce((s, a) => s + this.calculateAnnualTime(a), 0);
+      const totalHrs = (totalMin / 60).toFixed(1);
+      return `
+        <h3 style="margin:1.5rem 0 0.5rem;color:${accentColor};border-bottom:2px solid ${accentColor};padding-bottom:5px;font-size:13px;">${title}</h3>
+        <table>
+          <thead><tr>
+            <th style="width:28%">Actividad</th>
+            <th>Frec.</th><th>Unidad</th><th>T. Base</th>
+            <th>Imp/Coh/Rel</th><th>Prioridad</th>
+            <th>Hrs Anuales</th><th style="width:18%">Impacto Total</th>
+          </tr></thead>
+          <tbody>${buildRows(activities)}</tbody>
+          <tfoot><tr>
+            <td colspan="6" style="text-align:right;font-weight:700;">TOTAL ${title.toUpperCase()}:</td>
+            <td style="font-weight:800;font-size:12px;">${totalHrs} hrs</td>
+            <td></td>
+          </tr></tfoot>
+        </table>`;
+    };
+
+    const logoUrl = window.location.origin + '/assets/logo.png';
+    const dateStr = new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reporte Evaluación de Desempeño</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#111827;background:white;padding:1.5rem 2rem}
+    .rh{display:flex;align-items:center;gap:1.2rem;border-bottom:3px solid #003d7a;padding-bottom:1rem;margin-bottom:1.2rem}
+    .rh img{height:60px;width:60px;object-fit:contain}
+    .rh h1{font-size:17px;color:#003d7a;margin-bottom:3px}
+    .meta{display:flex;flex-wrap:wrap;gap:3px 20px;font-size:10px;color:#374151}
+    .meta strong{color:#003d7a}
+    .boxes{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.2rem}
+    .box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.65rem 0.8rem;text-align:center}
+    .box .lbl{font-size:9px;font-weight:700;text-transform:uppercase;color:#6b7280;margin-bottom:3px}
+    .box .val{font-size:16px;font-weight:800;color:#003d7a}
+    .box .sub{font-size:8px;color:#9ca3af;margin-top:2px}
+    table{width:100%;border-collapse:collapse;margin-bottom:0.5rem;font-size:10px}
+    thead tr{background:#003d7a;color:white}
+    thead th{padding:5px 6px;text-align:left;font-weight:600;font-size:9.5px}
+    tbody tr:nth-child(even){background:#f8fafc}
+    tbody td{padding:5px 6px;border-bottom:1px solid #e5e7eb;vertical-align:middle}
+    tfoot td{padding:5px 6px;background:#dbeafe;font-size:10.5px}
+    .foot{margin-top:1.5rem;border-top:1px solid #e5e7eb;padding-top:0.75rem;font-size:8.5px;color:#9ca3af;display:flex;justify-content:space-between}
+    @page{size:A4 landscape;margin:1cm}
+    @media print{body{padding:0.5rem}}
+  </style>
+</head>
+<body>
+  <div class="rh">
+    <img src="${logoUrl}" alt="Logo" onerror="this.style.display='none'">
+    <div>
+      <h1>Evaluación de Desempeño ${this.form?.year || ''} &nbsp;<span style="font-size:12px;color:#6b7280;font-weight:400">#${String(this.form?.id || '').padStart(5,'0')}</span></h1>
+      <div class="meta">
+        <span><strong>Empresa:</strong> ${this.form?.empresa || '-'}</span>
+        <span><strong>Área:</strong> ${this.form?.area || '-'}</span>
+        <span><strong>Proceso:</strong> ${this.form?.proceso || '-'}</span>
+        <span><strong>Líder:</strong> ${this.form?.lider || '-'}</span>
+        <span><strong>Cargo:</strong> ${this.form?.cargo || '-'}</span>
+        <span><strong>Período:</strong> ${this.form?.fechaInicio || ''} — ${this.form?.fechaFin || ''}</span>
+        <span><strong>Generado:</strong> ${dateStr}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="boxes">
+    <div class="box">
+      <div class="lbl">Total Actividades</div>
+      <div class="val">${all.length}</div>
+      <div class="sub">${laboral.length} lab · ${extralaboral.length} extralab</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Horas Anuales</div>
+      <div class="val">${(totalAllMin / 60).toFixed(1)}</div>
+      <div class="sub">${totalAllMin.toFixed(0)} minutos totales</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Horas Lab. Anuales</div>
+      <div class="val">${(this.getTotalMinutes('LABORAL', 'ANUAL') / 60).toFixed(1)}</div>
+      <div class="sub">Actividades Laborales</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Horas Extralab. Anuales</div>
+      <div class="val">${(this.getTotalMinutes('EXTRALABORAL', 'ANUAL') / 60).toFixed(1)}</div>
+      <div class="sub">Actividades Extralaborales</div>
+    </div>
+  </div>
+
+  ${buildSection('Actividades Laborales', laboral, '#1e40af')}
+  ${buildSection('Actividades Extralaborales', extralaboral, '#7e22ce')}
+
+  <div class="foot">
+    <span>Fundación Universitaria María Cano — Sistema de Gestión de Rendimiento</span>
+    <span>Fase 5 completada · Documento generado automáticamente · ${dateStr}</span>
+  </div>
+</body>
+</html>`;
+
+    const win = window.open('', '_blank', 'width=1200,height=850');
+    if (win) {
+      win.document.write(html);
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 700);
+    }
   }
 }

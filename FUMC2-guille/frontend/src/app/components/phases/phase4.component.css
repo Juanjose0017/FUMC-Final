@@ -1,0 +1,6 @@
+.text-secondary { color: var(--text-secondary); margin-bottom: 1rem; }
+.section-subtitle { color: var(--fumc-blue-dark); margin-bottom: 1rem; border-bottom: 2px solid var(--fumc-blue-light); padding-bottom: 0.5rem; }
+.mt-4 { margin-top: 2rem; }
+.priority-high { color: #dc2626; font-weight: bold; }
+.priority-medium { color: #d97706; font-weight: bold; }
+.priority-low { color: #16a34a; font-weight: bold; }

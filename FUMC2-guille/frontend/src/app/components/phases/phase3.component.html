@@ -1,0 +1,74 @@
+<div class="card">
+      <h3>Fase 3: Priorización</h3>
+      <p class="text-secondary">Califique Importancia (50%), Coherencia (30%) y Relevancia (20%) en una escala de 0 a 10.</p>
+
+      <!-- Laboral Activities -->
+      <h4 class="section-subtitle">Actividades Laborales</h4>
+      <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Frecuencia</th>
+                <th>Unidad de Tiempo</th>
+                <th width="100">Imp (0-10)</th>
+                <th width="100">Coh (0-10)</th>
+                <th width="100">Rel (0-10)</th>
+                <th>Prioridad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let activity of laboralActivities; trackBy: trackByActivityId">
+                <td>{{ activity.description }}</td>
+                <td>{{ activity.frequency }}</td>
+                <td>{{ activity.timeUnit }}</td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.importance" (ngModelChange)="validateScore(activity, 'importance')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.coherence" (ngModelChange)="validateScore(activity, 'coherence')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.relevance" (ngModelChange)="validateScore(activity, 'relevance')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <strong>{{ calculatePriority(activity) | number:'1.1-1' }}</strong>
+                </td>
+            </tr>
+        </tbody>
+      </table>
+
+      <!-- Extralaboral Activities -->
+      <h4 class="section-subtitle mt-4">Actividades Extralaborales</h4>
+      <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Frecuencia</th>
+                <th>Unidad de Tiempo</th>
+                <th width="100">Imp (0-10)</th>
+                <th width="100">Coh (0-10)</th>
+                <th width="100">Rel (0-10)</th>
+                <th>Prioridad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let activity of extralaboralActivities; trackBy: trackByActivityId">
+                <td>{{ activity.description }}</td>
+                <td>{{ activity.frequency }}</td>
+                <td>{{ activity.timeUnit }}</td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.importance" (ngModelChange)="validateScore(activity, 'importance')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.coherence" (ngModelChange)="validateScore(activity, 'coherence')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <input type="number" [(ngModel)]="activity.relevance" (ngModelChange)="validateScore(activity, 'relevance')" class="form-control" min="0" max="10">
+                </td>
+                <td>
+                    <strong>{{ calculatePriority(activity) | number:'1.1-1' }}</strong>
+                </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>

@@ -1,0 +1,104 @@
+<div class="register-container">
+      <!-- Success Modal -->
+      <div *ngIf="showSuccessModal" class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="success-icon">✓</div>
+          <h2>¡Registro Exitoso!</h2>
+          <p class="success-message">Tu cuenta ha sido creada correctamente</p>
+          
+          <div class="username-display">
+            <label>Tu usuario es:</label>
+            <div class="username-value">{{ generatedUsername }}</div>
+            <p class="username-hint">Usa este usuario para iniciar sesión</p>
+          </div>
+
+          <button (click)="goToLogin()" class="btn btn-primary w-100">
+            Ir a Iniciar Sesión
+          </button>
+        </div>
+      </div>
+
+      <div class="card register-card">
+        <div class="logo-section">
+          <img src="assets/logo.png" alt="FUMC Logo" class="app-logo">
+          <h2>Crear Cuenta</h2>
+          <p class="subtitle">Fundación Universitaria María Cano</p>
+        </div>
+        
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Primer Nombre *</label>
+              <input type="text" formControlName="firstName" class="form-control" placeholder="Primer nombre">
+              <div *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid" class="error-text">
+                Requerido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Segundo Nombre</label>
+              <input type="text" formControlName="secondName" class="form-control" placeholder="Segundo nombre (opcional)">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Primer Apellido *</label>
+              <input type="text" formControlName="firstLastName" class="form-control" placeholder="Primer apellido">
+              <div *ngIf="registerForm.get('firstLastName')?.touched && registerForm.get('firstLastName')?.invalid" class="error-text">
+                Requerido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Segundo Apellido *</label>
+              <input type="text" formControlName="secondLastName" class="form-control" placeholder="Segundo apellido">
+              <div *ngIf="registerForm.get('secondLastName')?.touched && registerForm.get('secondLastName')?.invalid" class="error-text">
+                Requerido
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cédula *</label>
+            <input type="text" formControlName="cedula" class="form-control" placeholder="Número de cédula">
+            <div *ngIf="registerForm.get('cedula')?.touched && registerForm.get('cedula')?.invalid" class="error-text">
+              La cédula es requerida (mínimo 4 dígitos)
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" formControlName="email" class="form-control" placeholder="correo@ejemplo.com">
+            <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="error-text">
+              <span *ngIf="registerForm.get('email')?.errors?.['required']">El email es requerido</span>
+              <span *ngIf="registerForm.get('email')?.errors?.['email']">Email inválido</span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Código de Registro *</label>
+            <input type="text" formControlName="registrationToken" class="form-control" placeholder="Código proporcionado por el administrador">
+            <div *ngIf="registerForm.get('registrationToken')?.touched && registerForm.get('registrationToken')?.invalid" class="error-text">
+              El código de registro es requerido
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Contraseña *</label>
+            <input type="password" formControlName="password" class="form-control" placeholder="Elige una contraseña">
+            <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="error-text">
+              La contraseña es requerida
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Registrando...' : 'Registrarse' }}
+          </button>
+          
+          <div class="login-link">
+            ¿Ya tienes cuenta? <a routerLink="/login">Inicia Sesión</a>
+          </div>
+        </form>
+      </div>
+    </div>

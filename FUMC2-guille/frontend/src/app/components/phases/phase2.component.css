@@ -1,0 +1,9 @@
+.phase-container { max-width: 1200px; margin: 0 auto; }
+.phase-header { margin-bottom: 2rem; text-align: center; }
+.phase-header h2 { color: var(--fumc-blue-dark); font-size: 2rem; margin-bottom: 0.5rem; }
+.phase-description { color: var(--fumc-gray); font-size: 1rem; }
+.section-title { color: var(--fumc-blue-dark); font-size: 1.25rem; margin-bottom: 1.5rem; }
+.activity-section { margin-top: 2rem; }
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--fumc-gray); background: var(--fumc-background); border-radius: 8px; margin-top: 1rem; }
+.table-responsive { overflow-x: auto; }
+select.form-control { min-width: 120px; }

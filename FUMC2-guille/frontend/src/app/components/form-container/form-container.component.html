@@ -1,0 +1,107 @@
+<div class="form-wrapper" *ngIf="form">
+      <!-- Phase Indicator -->
+      <app-phase-indicator [currentPhase]="form.currentPhase"></app-phase-indicator>
+      <div class="top-bar">
+        <button (click)="goBack()" class="btn btn-secondary" *ngIf="form.currentPhase !== 5">
+          ← Volver al Tablero
+        </button>
+        <h1 class="form-title">
+          Evaluación de Desempeño {{ form.year }} 
+          <span class="form-id">#{{ getFormattedId(form.id) }}</span>
+        </h1>
+        <div class="progress-indicator">
+          <div class="progress-step" [class.active]="form.currentPhase >= 1" [class.current]="form.currentPhase === 1">1</div>
+          <div class="progress-line" [class.active]="form.currentPhase > 1"></div>
+          <div class="progress-step" [class.active]="form.currentPhase >= 2" [class.current]="form.currentPhase === 2">2</div>
+          <div class="progress-line" [class.active]="form.currentPhase > 2"></div>
+          <div class="progress-step" [class.active]="form.currentPhase >= 3" [class.current]="form.currentPhase === 3">3</div>
+          <div class="progress-line" [class.active]="form.currentPhase > 3"></div>
+          <div class="progress-step" [class.active]="form.currentPhase >= 4" [class.current]="form.currentPhase === 4">4</div>
+          <div class="progress-line" [class.active]="form.currentPhase > 4"></div>
+          <div class="progress-step" [class.active]="form.currentPhase >= 5" [class.current]="form.currentPhase === 5">5</div>
+        </div>
+      </div>
+
+      <!-- Header Info Card -->
+      <div class="card info-header">
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-badge">
+                    <img src="assets/logo.png" alt="FUMC Logo" class="form-logo">
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label class="info-label">Empresa:</label>
+                    <span class="info-value">{{ form.empresa || 'Fundación Universitaria María Cano' }}</span>
+                </div>
+                <div class="info-item">
+                    <label class="info-label">Área:</label>
+                    <span class="info-value">{{ form.area || 'No definida' }}</span>
+                </div>
+                <div class="info-item">
+                    <label class="info-label">Proceso:</label>
+                    <span class="info-value">{{ form.proceso || 'No definido' }}</span>
+                </div>
+                <div class="info-item">
+                    <label class="info-label">Líder:</label>
+                    <span class="info-value">{{ form.lider || 'No asignado' }}</span>
+                </div>
+                <div class="info-item">
+                    <label class="info-label">Período:</label>
+                    <span class="info-value">{{ form.fechaInicio | spanishDate }} - {{ form.fechaFin | spanishDate }}</span>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- Phase Components -->
+      <app-phase1 *ngIf="form.currentPhase === 1" 
+        [form]="form" 
+        [activities]="form.activities"
+        (headerUpdated)="updateHeader($event)"
+        (activityAdded)="addActivity($event)"
+        (activityDeleted)="deleteActivity($event)"
+        (activityUpdated)="updateActivity($event)">
+      </app-phase1>
+
+      <app-phase2 *ngIf="form.currentPhase === 2" 
+        [form]="form"
+        (onUpdateActivity)="updateActivity($event)">
+      </app-phase2>
+
+      <app-phase3 *ngIf="form.currentPhase === 3" 
+        [form]="form"
+        (onUpdateActivity)="updateActivity($event)">
+      </app-phase3>
+
+      <app-phase4 *ngIf="form.currentPhase === 4" 
+        [form]="form"
+        (onUpdateActivity)="updateActivity($event)">
+      </app-phase4>
+
+      <app-phase5 *ngIf="form.currentPhase === 5" 
+        [form]="form">
+      </app-phase5>
+
+      <!-- Navigation Actions -->
+      <div class="navigation-footer">
+        <div class="spacer"></div>
+        
+        <!-- Validation Error Messages -->
+        <div *ngIf="!canAdvance() && form.currentPhase < 5" class="validation-error">
+          <span class="error-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
+          <span>{{ getValidationMessage() }}</span>
+        </div>
+        
+        <button 
+          (click)="form.currentPhase === 5 ? goBack() : advancePhase()" 
+          class="btn btn-primary"
+          [disabled]="isActionDisabled()"
+          [class.btn-disabled]="isActionDisabled()">
+          {{ form.currentPhase === 5 ? 'Volver al Tablero' : 'Continuar →' }}
+        </button>
+      </div>
+    </div>

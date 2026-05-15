@@ -1,0 +1,62 @@
+<div class="container">
+      <div class="header">
+        <div class="brand-section">
+            <img src="assets/logo.png" alt="FUMC Logo" class="app-logo">
+            <div>
+                <h1>Reportes Consolidados</h1>
+                <p class="subtitle">Análisis de Evaluaciones de Desempeño</p>
+            </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Evaluaciones</h3>
+          <div class="value">{{ totalForms }}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Evaluaciones Completadas</h3>
+          <div class="value">{{ completedForms.length }}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Sin Completar</h3>
+          <div class="value">{{ incompleteForms }}</div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <h3>Detalle por Colaborador</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Cargo</th>
+                <th>Área</th>
+                <th>Estado</th>
+                <th>Fecha Cierre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let form of completedForms">
+                <td>
+                  <div class="user-cell">
+                    <span class="user-name">{{ form.user?.firstName }} {{ form.user?.firstLastName }}</span>
+                    <span class="user-cedula">{{ form.user?.cedula }}</span>
+                  </div>
+                </td>
+                <td>{{ form.cargo }}</td>
+                <td>{{ form.area }}</td>
+                <td>
+                    <span class="badge phase-5">Finalizado</span>
+                </td>
+                <td>{{ form.fechaFin | spanishDate }}</td>
+              </tr>
+              <tr *ngIf="completedForms.length === 0">
+                <td colspan="5" class="text-center">No hay evaluaciones finalizadas aún.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

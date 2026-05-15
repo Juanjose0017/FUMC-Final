@@ -43,7 +43,7 @@ public class RegistrationToken {
             this.createdAt = LocalDateTime.now();
         }
         if (this.token == null) {
-            this.token = UUID.randomUUID().toString();
+            this.token = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         }
     }
 

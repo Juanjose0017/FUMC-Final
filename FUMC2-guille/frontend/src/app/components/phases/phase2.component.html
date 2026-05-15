@@ -1,0 +1,84 @@
+<div class="phase-container">
+      <div class="phase-header">
+        <h2>Fase 2: Frecuencia y Tiempo</h2>
+        <p class="phase-description">Defina la frecuencia (como un número) y la unidad de tiempo para cada actividad.</p>
+      </div>
+
+      <!-- Laboral Activities -->
+      <div class="card activity-section">
+        <h3 class="section-title">Actividades Laborales</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th style="width: 150px;">Frecuencia</th>
+                <th style="width: 200px;">Unidad de Tiempo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let activity of laboralActivities; trackBy: trackByActivityId">
+                <td>{{ activity.description }}</td>
+                <td>
+                  <input type="number" [(ngModel)]="activity.frequency" (change)="updateActivity(activity)" class="form-control" min="1" placeholder="Ej: 3" style="width: 100px;">
+                </td>
+                <td>
+                  <select [(ngModel)]="activity.timeUnit" (change)="updateActivity(activity)" class="form-control">
+                    <option value="">Seleccione...</option>
+                    <option value="DIA">Día</option>
+                    <option value="SEMANA">Semana</option>
+                    <option value="QUINCENA">Quincena</option>
+                    <option value="MES">Mes</option>
+                    <option value="TRIMESTRE">Trimestre</option>
+                    <option value="SEMESTRE">Semestre</option>
+                    <option value="AÑO">Año</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="laboralActivities.length === 0" class="empty-state">
+          <p>No hay actividades laborales registradas</p>
+        </div>
+      </div>
+
+      <!-- Extralaboral Activities -->
+      <div class="card activity-section">
+        <h3 class="section-title">Actividades Extralaborales</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th style="width: 150px;">Frecuencia</th>
+                <th style="width: 200px;">Unidad de Tiempo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let activity of extralaboralActivities; trackBy: trackByActivityId">
+                <td>{{ activity.description }}</td>
+                <td>
+                  <input type="number" [(ngModel)]="activity.frequency" (change)="updateActivity(activity)" class="form-control" min="1" placeholder="Ej: 3" style="width: 100px;">
+                </td>
+                <td>
+                  <select [(ngModel)]="activity.timeUnit" (change)="updateActivity(activity)" class="form-control">
+                    <option value="">Seleccione...</option>
+                    <option value="DIA">Día</option>
+                    <option value="SEMANA">Semana</option>
+                    <option value="QUINCENA">Quincena</option>
+                    <option value="MES">Mes</option>
+                    <option value="TRIMESTRE">Trimestre</option>
+                    <option value="SEMESTRE">Semestre</option>
+                    <option value="AÑO">Año</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="extralaboralActivities.length === 0" class="empty-state">
+          <p>No hay actividades extralaborales registradas</p>
+        </div>
+      </div>
+    </div>
