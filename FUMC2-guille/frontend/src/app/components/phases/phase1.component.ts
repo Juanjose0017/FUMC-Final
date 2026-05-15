@@ -28,7 +28,13 @@ export class Phase1Component implements OnInit {
 
   ngOnInit() {
     if (!this.form.fechaInicio) {
-      this.form.fechaInicio = new Date().toISOString().split('T')[0];
+      // Use local date instead of UTC to avoid timezone issues
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      this.form.fechaInicio = `${year}-${month}-${day}`;
+      
       this.updateHeader();
     }
     this.loadProcesses();

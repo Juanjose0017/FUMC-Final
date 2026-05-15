@@ -28,4 +28,19 @@ export class Phase2Component {
   trackByActivityId(index: number, activity: any): number {
     return activity.id;
   }
+
+  activeTooltip: string | null = null;
+
+  toggleTooltip(type: string, event: Event) {
+    event.stopPropagation();
+    if (this.activeTooltip === type) {
+      this.activeTooltip = null;
+    } else {
+      this.activeTooltip = type;
+    }
+  }
+
+  closeTooltip() {
+    this.activeTooltip = null;
+  }
 }

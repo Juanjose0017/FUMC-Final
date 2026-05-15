@@ -80,4 +80,19 @@ export class Phase4Component {
         }
         return activity.timeValue * factor;
     }
+
+    activeTooltip: string | null = null;
+
+    toggleTooltip(type: string, event: Event) {
+        event.stopPropagation();
+        if (this.activeTooltip === type) {
+            this.activeTooltip = null;
+        } else {
+            this.activeTooltip = type;
+        }
+    }
+
+    closeTooltip() {
+        this.activeTooltip = null;
+    }
 }

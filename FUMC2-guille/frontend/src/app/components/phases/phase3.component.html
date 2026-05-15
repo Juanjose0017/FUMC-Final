@@ -10,9 +10,24 @@
                 <th>Descripción</th>
                 <th>Frecuencia</th>
                 <th>Unidad de Tiempo</th>
-                <th width="100">Imp (0-10)</th>
-                <th width="100">Coh (0-10)</th>
-                <th width="100">Rel (0-10)</th>
+                <th width="100">
+                  Imp (0-10)
+                  <span (click)="toggleTooltip('imp', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
+                <th width="100">
+                  Coh (0-10)
+                  <span (click)="toggleTooltip('coh', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
+                <th width="100">
+                  Rel (0-10)
+                  <span (click)="toggleTooltip('rel', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
                 <th>Prioridad</th>
             </tr>
         </thead>
@@ -45,9 +60,24 @@
                 <th>Descripción</th>
                 <th>Frecuencia</th>
                 <th>Unidad de Tiempo</th>
-                <th width="100">Imp (0-10)</th>
-                <th width="100">Coh (0-10)</th>
-                <th width="100">Rel (0-10)</th>
+                <th width="100">
+                  Imp (0-10)
+                  <span (click)="toggleTooltip('imp', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
+                <th width="100">
+                  Coh (0-10)
+                  <span (click)="toggleTooltip('coh', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
+                <th width="100">
+                  Rel (0-10)
+                  <span (click)="toggleTooltip('rel', $event)" class="help-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="help-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  </span>
+                </th>
                 <th>Prioridad</th>
             </tr>
         </thead>
@@ -71,4 +101,23 @@
             </tr>
         </tbody>
       </table>
+    </div>
+    
+    <!-- Modal de Ayuda -->
+    <div class="help-modal-overlay" *ngIf="activeTooltip" (click)="closeTooltip()">
+      <div class="help-modal" (click)="$event.stopPropagation()">
+        <div class="help-modal-header">
+          <h4>
+            <ng-container *ngIf="activeTooltip === 'imp'">Importancia (Imp)</ng-container>
+            <ng-container *ngIf="activeTooltip === 'coh'">Coherencia (Coh)</ng-container>
+            <ng-container *ngIf="activeTooltip === 'rel'">Relevancia (Rel)</ng-container>
+          </h4>
+          <button class="close-btn" (click)="closeTooltip()">&times;</button>
+        </div>
+        <div class="help-modal-body">
+          <p *ngIf="activeTooltip === 'imp'">Qué tan fundamental o prioritaria es la actividad para el logro de los objetivos principales.</p>
+          <p *ngIf="activeTooltip === 'coh'">Qué tan alineada está la actividad con el propósito de tu cargo, tu rol o área de trabajo.</p>
+          <p *ngIf="activeTooltip === 'rel'">El nivel de impacto, valor o trascendencia que tiene la actividad dentro del contexto general o a largo plazo.</p>
+        </div>
+      </div>
     </div>

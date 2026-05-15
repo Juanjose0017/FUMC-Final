@@ -25,6 +25,40 @@
   white-space: nowrap;
 }
 
+.tab-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  margin-top: -2px;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+/* Colores únicos por icono */
+.icon-resumen {
+  stroke: #3b82f6;
+  background: #eff6ff;
+}
+.icon-porcentajes {
+  stroke: #8b5cf6;
+  background: #f5f3ff;
+}
+.icon-graficos {
+  stroke: #10b981;
+  background: #ecfdf5;
+}
+.icon-detalle {
+  stroke: #f59e0b;
+  background: #fffbeb;
+}
+
+/* Iconos iluminados en botón activo */
+.tab-button.active .icon-resumen   { background: #3b82f6; stroke: white; }
+.tab-button.active .icon-porcentajes { background: #8b5cf6; stroke: white; }
+.tab-button.active .icon-graficos  { background: #10b981; stroke: white; }
+.tab-button.active .icon-detalle   { background: #f59e0b; stroke: white; }
+
 .tab-button:hover {
   background: var(--fumc-gray-light);
   color: var(--fumc-blue-dark);
