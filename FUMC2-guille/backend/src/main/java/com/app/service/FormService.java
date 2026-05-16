@@ -237,6 +237,13 @@ public class FormService {
         throw new RuntimeException("No se puede retroceder desde esta fase");
     }
 
+    public PerformanceForm unlockForm(Long formId) {
+        PerformanceForm form = formRepository.findById(formId)
+                .orElseThrow(() -> new RuntimeException("Form not found"));
+        form.setCurrentPhase(1);
+        return formRepository.save(form);
+    }
+
     // Soft delete - mark as deleted instead of removing
     @Transactional
     public void deleteForm(Long formId) {

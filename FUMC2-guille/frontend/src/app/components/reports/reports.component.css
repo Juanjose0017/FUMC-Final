@@ -4,32 +4,38 @@
   align-items: center;
   margin-bottom: 2rem;
 }
+
 .brand-section {
   display: flex;
   align-items: center;
   gap: 1.5rem;
 }
+
 .app-logo {
-  height: 75px;
+  height: 110px;
   width: auto;
 }
+
 .subtitle {
   color: var(--text-secondary);
   margin: 0;
 }
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
+
 .stat-card {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border-left: 4px solid var(--fumc-fuchsia);
 }
+
 .stat-card h3 {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -37,14 +43,41 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .stat-card .value {
   font-size: 2rem;
   font-weight: 700;
   color: var(--fumc-blue-dark);
 }
-.table-card { padding: 0; overflow: hidden; }
-.table-card h3 { padding: 1.5rem; margin: 0; border-bottom: 1px solid var(--border-color); background: #f8f9fa; }
-.user-cell { display: flex; flex-direction: column; }
-.user-name { font-weight: 600; color: var(--fumc-blue-dark); }
-.user-cedula { font-size: 0.8rem; color: var(--text-secondary); }
-.badge.phase-5 { background-color: #dcfce7; color: #166534; }
+
+.table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.table-card h3 {
+  padding: 1.5rem;
+  margin: 0;
+  border-bottom: 1px solid var(--border-color);
+  background: #f8f9fa;
+}
+
+.user-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--fumc-blue-dark);
+}
+
+.user-cedula {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.badge.phase-5 {
+  background-color: #dcfce7;
+  color: #166534;
+}

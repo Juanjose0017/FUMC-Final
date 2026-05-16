@@ -111,6 +111,12 @@ public class FormController {
         return formService.regressPhase(id);
     }
 
+    @PostMapping("/{id}/unlock")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    public PerformanceForm unlockForm(@PathVariable Long id) {
+        return formService.unlockForm(id);
+    }
+
     @GetMapping("/consolidated")
     @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
     public List<PerformanceForm> getConsolidatedReports() {

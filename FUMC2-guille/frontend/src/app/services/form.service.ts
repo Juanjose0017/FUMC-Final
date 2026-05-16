@@ -59,6 +59,10 @@ export class FormService {
         return this.http.post<any>(`${this.apiUrl}/${id}/regress`, {}, { headers: this.getHeaders() });
     }
 
+    unlockForm(id: number): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/${id}/unlock`, {}, { headers: this.getHeaders() });
+    }
+
     getConsolidatedReports(): Observable<any[]> {
         return this.http.get<any[]>(`${this.apiUrl}/consolidated`, { headers: this.getHeaders() });
     }

@@ -46,6 +46,10 @@ export class FormContainerComponent implements OnInit {
     this.loadForm(id);
   }
 
+  get isAdmin(): boolean {
+    return this.currentUser?.role === 'ADMIN' || this.currentUser?.role === 'LIDER';
+  }
+
   loadForm(id: number) {
     this.formService.getForm(id, this.currentUser.userId).subscribe(data => {
       this.form = data;
@@ -238,6 +242,32 @@ export class FormContainerComponent implements OnInit {
         }
       );
     }
+  }
+
+  unlockForm() {
+    this.notify.showConfirm(
+      'Habilitar Edición',
+      '¿Desea habilitar la edición para este formato? El formato volverá a la Fase 1 para permitir modificaciones.',
+      'warning',
+      'Habilitar',
+      () => {
+        this.formService.unlockForm(this.form.id).subscribe({
+          next: (updated) => {
+            this.form = updated;
+            this.notify.showToast('success', 'Edición habilitada', 'El formato ahora puede ser editado.');
+          },
+          error: (error) => {
+            console.error('Error unlocking form:', error);
+            if (error.error && error.error.id && error.error.currentPhase) {
+              this.form = error.error;
+              this.notify.showToast('success', 'Edición habilitada', 'El formato ahora puede ser editado.');
+              return;
+            }
+            this.notify.showToast('error', 'Error', 'No fue posible habilitar la edición.');
+          }
+        });
+      }
+    );
   }
 
   getValidationMessage(): string {
