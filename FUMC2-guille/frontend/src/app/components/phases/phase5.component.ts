@@ -19,12 +19,10 @@ export class Phase5Component implements OnChanges {
   // Tab state
   currentTab: 'resumen' | 'porcentajes' | 'graficos' | 'detalle' = 'resumen';
 
-  // Method to change tab
   setTab(tab: 'resumen' | 'porcentajes' | 'graficos' | 'detalle') {
     this.currentTab = tab;
   }
 
-  // Warm and Varied Palette
   private warmColors = [
     '#FF6B6B', '#FFD93D', '#FF8E3C', '#FF5252', '#E040FB',
     '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF',
@@ -41,9 +39,7 @@ export class Phase5Component implements OnChanges {
       }
     },
     plugins: {
-      legend: {
-        display: false
-      },
+      legend: { display: false },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -67,6 +63,8 @@ export class Phase5Component implements OnChanges {
     }
   }
 
+  // ─── Getters de actividades ───────────────────────────────────────────────
+
   get laboralActivities() {
     return this.form?.activities?.filter((a: any) => a.activityType === 'LABORAL') || [];
   }
@@ -74,6 +72,8 @@ export class Phase5Component implements OnChanges {
   get extralaboralActivities() {
     return this.form?.activities?.filter((a: any) => a.activityType === 'EXTRALABORAL') || [];
   }
+
+  // ─── Prioridad ────────────────────────────────────────────────────────────
 
   getPriorityLabel(score: number): string {
     if (score >= 4.0) return 'Alta';
@@ -87,19 +87,21 @@ export class Phase5Component implements OnChanges {
     return 'priority-low';
   }
 
+  // ─── Cálculos de tiempo ───────────────────────────────────────────────────
+
   calculateAnnualTime(activity: any): number {
     if (activity.timeValue === undefined || !activity.timeUnit) return 0;
     let factor = 0;
     switch (activity.timeUnit) {
-      case 'DIA': factor = 5 * 4.3 * 12; break;
-      case 'SEMANA': factor = 4.3 * 12; break;
-      case 'QUINCENA': factor = 2 * 12; break;
-      case 'MES': factor = 12; break;
-      case 'TRIMESTRE': factor = 4; break;
-      case 'SEMESTRE': factor = 2; break;
-      case 'ANIO': factor = 1; break;
-      case 'AÑO': factor = 1; break;
-      case 'ANUAL': factor = 1; break;
+      case 'DIA':      factor = 5 * 4.3 * 12; break;
+      case 'SEMANA':   factor = 4.3 * 12;      break;
+      case 'QUINCENA': factor = 2 * 12;         break;
+      case 'MES':      factor = 12;             break;
+      case 'TRIMESTRE':factor = 4;              break;
+      case 'SEMESTRE': factor = 2;              break;
+      case 'ANIO':
+      case 'AÑO':
+      case 'ANUAL':    factor = 1;              break;
     }
     return activity.timeValue * factor;
   }
@@ -107,14 +109,14 @@ export class Phase5Component implements OnChanges {
   calculateTime(activity: any, unit: string): number {
     const annual = this.calculateAnnualTime(activity);
     switch (unit) {
-      case 'DIA': return annual / (5 * 4.3 * 12);
-      case 'SEMANA': return annual / (4.3 * 12);
+      case 'DIA':      return annual / (5 * 4.3 * 12);
+      case 'SEMANA':   return annual / (4.3 * 12);
       case 'QUINCENA': return annual / (2 * 12);
-      case 'MES': return annual / 12;
-      case 'TRIMESTRE': return annual / 4;
+      case 'MES':      return annual / 12;
+      case 'TRIMESTRE':return annual / 4;
       case 'SEMESTRE': return annual / 2;
-      case 'ANUAL': return annual;
-      default: return 0;
+      case 'ANUAL':    return annual;
+      default:         return 0;
     }
   }
 
@@ -129,29 +131,113 @@ export class Phase5Component implements OnChanges {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   }
 
+  // ─── Análisis de carga semanal (LABORALES) ────────────────────────────────
+
+  /** Total de horas semanales de las actividades LABORALES */
+  get totalLaboralWeeklyHours(): number {
+    return this.getTotalMinutes('LABORAL', 'SEMANA') / 60;
+  }
+
+  /** Límite semanal laboral definido en Fase 1 */
+  get weeklyWorkLimit(): number {
+    return this.form?.weeklyWorkHours || 0;
+  }
+
+  /** Horas laborales que superan el límite semanal */
+  get laboralOverflowHours(): number {
+    const overflow = this.totalLaboralWeeklyHours - this.weeklyWorkLimit;
+    return overflow > 0 ? overflow : 0;
+  }
+
+  get hasLaboralOverflow(): boolean {
+    return this.weeklyWorkLimit > 0 && this.laboralOverflowHours > 0;
+  }
+
+  /** Porcentaje de uso del cupo laboral (máx 100 para la barra) */
+  get laboralUsagePercent(): number {
+    if (this.weeklyWorkLimit === 0) return 0;
+    return Math.min((this.totalLaboralWeeklyHours / this.weeklyWorkLimit) * 100, 100);
+  }
+
+  // ─── Análisis de carga semanal (EXTRALABORALES) ──────────────────────────
+
+  /** Total de horas semanales de las actividades EXTRALABORALES */
+  get totalExtralaboralWeeklyHours(): number {
+    return this.getTotalMinutes('EXTRALABORAL', 'SEMANA') / 60;
+  }
+
+  /** Límite semanal extralaboral definido en Fase 1 */
+  get weeklyExtraLimit(): number {
+    return this.form?.weeklyExtraHours || 0;
+  }
+
+  /** Horas extralaborales que superan el límite semanal */
+  get extralaboralOverflowHours(): number {
+    const overflow = this.totalExtralaboralWeeklyHours - this.weeklyExtraLimit;
+    return overflow > 0 ? overflow : 0;
+  }
+
+  get hasExtralaboralOverflow(): boolean {
+    return this.weeklyExtraLimit > 0 && this.extralaboralOverflowHours > 0;
+  }
+
+  /** Porcentaje de uso del cupo extralaboral (máx 100 para la barra) */
+  get extralaboralUsagePercent(): number {
+    if (this.weeklyExtraLimit === 0) return 0;
+    return Math.min((this.totalExtralaboralWeeklyHours / this.weeklyExtraLimit) * 100, 100);
+  }
+
+  // ─── Actividades con marcado de desbordamiento ────────────────────────────
+
+  /**
+   * Retorna las actividades LABORALES marcando cuáles forman parte del
+   * exceso una vez que la suma acumulada supera el límite semanal.
+   */
+  get laboralActivitiesWithOverflow(): { activity: any; weeklyHours: number; isOverflow: boolean }[] {
+    const limit = this.weeklyWorkLimit;
+    let accumulated = 0;
+    return this.laboralActivities.map((a: any) => {
+      const wh = this.calculateTime(a, 'SEMANA') / 60;
+      accumulated += wh;
+      return { activity: a, weeklyHours: wh, isOverflow: limit > 0 && accumulated > limit };
+    });
+  }
+
+  /**
+   * Retorna las actividades EXTRALABORALES marcando las del exceso.
+   */
+  get extralaboralActivitiesWithOverflow(): { activity: any; weeklyHours: number; isOverflow: boolean }[] {
+    const limit = this.weeklyExtraLimit;
+    let accumulated = 0;
+    return this.extralaboralActivities.map((a: any) => {
+      const wh = this.calculateTime(a, 'SEMANA') / 60;
+      accumulated += wh;
+      return { activity: a, weeklyHours: wh, isOverflow: limit > 0 && accumulated > limit };
+    });
+  }
+
+  // ─── Gráficos ─────────────────────────────────────────────────────────────
+
   updateChartData() {
     if (!this.form?.activities) return;
 
-    // Laboral Chart
     const laboralLabels = this.laboralActivities.map((a: any) => a.description);
-    const laboralData = this.laboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
+    const laboralData   = this.laboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
     this.laboralChartData = {
       labels: laboralLabels,
       datasets: [{ label: 'Horas Anuales', data: laboralData, backgroundColor: this.warmColors }]
     };
 
-    // Extralaboral Chart
     const extralaboralLabels = this.extralaboralActivities.map((a: any) => a.description);
-    const extralaboralData = this.extralaboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
+    const extralaboralData   = this.extralaboralActivities.map((a: any) => this.calculateAnnualTime(a) / 60);
     this.extralaboralChartData = {
       labels: extralaboralLabels,
       datasets: [{ label: 'Horas Anuales', data: extralaboralData, backgroundColor: this.warmColors }]
     };
 
-    // Frequency Unit Chart
     const timeByUnit: { [key: string]: number } = {};
     this.form.activities.forEach((activity: any) => {
-      const unit = activity.timeUnit || 'Sin Unidad';
+      const unit  = activity.timeUnit || 'Sin Unidad';
       const hours = this.calculateAnnualTime(activity) / 60;
       timeByUnit[unit] = (timeByUnit[unit] || 0) + hours;
     });
@@ -162,16 +248,14 @@ export class Phase5Component implements OnChanges {
     };
   }
 
-  // Percentage Calculations
-  // Calculate percentage of time for an activity within its frequency group
+  // ─── Porcentajes ──────────────────────────────────────────────────────────
+
   getPercentageInFrequencyGroup(activity: any, type: 'LABORAL' | 'EXTRALABORAL'): number {
     const total = this.getFrequencyGroupTotal(activity.timeUnit, type);
     if (total === 0) return 0;
-    const activityTime = this.calculateAnnualTime(activity);
-    return (activityTime / total) * 100;
+    return (this.calculateAnnualTime(activity) / total) * 100;
   }
 
-  // Get total time for all activities in a specific frequency group
   getFrequencyGroupTotal(timeUnit: string, type: 'LABORAL' | 'EXTRALABORAL'): number {
     const activities = type === 'LABORAL' ? this.laboralActivities : this.extralaboralActivities;
     return activities
@@ -179,29 +263,25 @@ export class Phase5Component implements OnChanges {
       .reduce((sum: number, a: any) => sum + this.calculateAnnualTime(a), 0);
   }
 
-  // Get all unique frequency units for a type
   getUniqueFrequencyUnits(type: 'LABORAL' | 'EXTRALABORAL'): string[] {
     const activities = type === 'LABORAL' ? this.laboralActivities : this.extralaboralActivities;
     const units = activities.map((a: any) => a.timeUnit as string).filter((u: string) => u);
     return Array.from(new Set<string>(units));
   }
 
-  // Get activities by frequency unit
   getActivitiesByFrequency(timeUnit: string, type: 'LABORAL' | 'EXTRALABORAL'): any[] {
     const activities = type === 'LABORAL' ? this.laboralActivities : this.extralaboralActivities;
     return activities.filter((a: any) => a.timeUnit === timeUnit);
   }
 
-  // Calculate overall percentage distribution across all frequencies
-  getOverallFrequencyPercentages(): { unit: string, percentage: number, hours: number }[] {
-    const allActivities = [...this.laboralActivities, ...this.extralaboralActivities];
+  getOverallFrequencyPercentages(): { unit: string; percentage: number; hours: number }[] {
+    const allActivities  = [...this.laboralActivities, ...this.extralaboralActivities];
     const totalAnnualTime = allActivities.reduce((sum: number, a: any) => sum + this.calculateAnnualTime(a), 0);
 
     const frequencyTotals: { [key: string]: number } = {};
     allActivities.forEach((activity: any) => {
       const unit = activity.timeUnit || 'Sin Unidad';
-      const time = this.calculateAnnualTime(activity);
-      frequencyTotals[unit] = (frequencyTotals[unit] || 0) + time;
+      frequencyTotals[unit] = (frequencyTotals[unit] || 0) + this.calculateAnnualTime(activity);
     });
 
     return Object.entries(frequencyTotals).map(([unit, time]) => ({
@@ -211,34 +291,27 @@ export class Phase5Component implements OnChanges {
     }));
   }
 
-  // --- DETALLE COMPLETO LOGIC ---
+  // ─── Detalle Completo ────────────────────────────────────────────────────
+
   activeFilterType: 'TODAS' | 'LABORAL' | 'EXTRALABORAL' = 'TODAS';
   activeFilterPriority: 'TODAS' | 'ALTA' | 'MEDIA' | 'BAJA' = 'TODAS';
 
   getFilteredActivities(): any[] {
     let activities = [...this.laboralActivities, ...this.extralaboralActivities];
-
     if (this.activeFilterType !== 'TODAS') {
       activities = activities.filter(a => a.activityType === this.activeFilterType);
     }
-
     if (this.activeFilterPriority !== 'TODAS') {
       activities = activities.filter(a => {
         const label = this.getPriorityLabel(a.priorityScore || 0).toUpperCase();
         return label === this.activeFilterPriority;
       });
     }
-
     return activities;
   }
 
-  setFilterType(type: 'TODAS' | 'LABORAL' | 'EXTRALABORAL') {
-    this.activeFilterType = type;
-  }
-
-  setFilterPriority(priority: 'TODAS' | 'ALTA' | 'MEDIA' | 'BAJA') {
-    this.activeFilterPriority = priority;
-  }
+  setFilterType(type: 'TODAS' | 'LABORAL' | 'EXTRALABORAL') { this.activeFilterType = type; }
+  setFilterPriority(priority: 'TODAS' | 'ALTA' | 'MEDIA' | 'BAJA') { this.activeFilterPriority = priority; }
 
   getTotalAnnualTimeAll(): number {
     const all = [...this.laboralActivities, ...this.extralaboralActivities];
@@ -251,15 +324,17 @@ export class Phase5Component implements OnChanges {
     return (this.calculateAnnualTime(activity) / total) * 100;
   }
 
+  // ─── Impresión ────────────────────────────────────────────────────────────
+
   printReport() {
-    const laboral = this.laboralActivities;
+    const laboral     = this.laboralActivities;
     const extralaboral = this.extralaboralActivities;
-    const all = [...laboral, ...extralaboral];
-    const totalAllMin = this.getTotalAnnualTimeAll();
+    const all          = [...laboral, ...extralaboral];
+    const totalAllMin  = this.getTotalAnnualTimeAll();
 
     const priorityStyle = (score: number) => {
       const label = this.getPriorityLabel(score);
-      const bg = label === 'Alta' ? '#fee2e2' : label === 'Media' ? '#fef3c7' : '#dcfce7';
+      const bg    = label === 'Alta' ? '#fee2e2' : label === 'Media' ? '#fef3c7' : '#dcfce7';
       const color = label === 'Alta' ? '#b91c1c' : label === 'Media' ? '#b45309' : '#15803d';
       return { label, bg, color };
     };
@@ -267,9 +342,9 @@ export class Phase5Component implements OnChanges {
     const buildRows = (activities: any[]) => activities.map(a => {
       const annualMin = this.calculateAnnualTime(a);
       const annualHrs = (annualMin / 60).toFixed(1);
-      const impact = totalAllMin > 0 ? ((annualMin / totalAllMin) * 100).toFixed(1) : '0.0';
-      const p = priorityStyle(a.priorityScore || 0);
-      const barFill = `width:${impact}%;height:8px;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:4px;`;
+      const impact    = totalAllMin > 0 ? ((annualMin / totalAllMin) * 100).toFixed(1) : '0.0';
+      const p         = priorityStyle(a.priorityScore || 0);
+      const barFill   = `width:${impact}%;height:8px;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:4px;`;
       return `<tr>
         <td>${a.description}</td>
         <td style="text-align:center">${a.frequency || 0}</td>
@@ -311,6 +386,14 @@ export class Phase5Component implements OnChanges {
 
     const logoUrl = window.location.origin + '/assets/logo.png';
     const dateStr = new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' });
+
+    // Sección de alerta de desbordamiento para el reporte impreso
+    const overflowSection = (this.hasLaboralOverflow || this.hasExtralaboralOverflow) ? `
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:10px;">
+        <strong style="color:#c2410c;">⚠ Análisis de Carga Horaria</strong>
+        ${this.hasLaboralOverflow ? `<p style="margin:4px 0;color:#9a3412;">Horas laborales: <strong>${this.totalLaboralWeeklyHours.toFixed(1)} hrs/sem</strong> — Límite: ${this.weeklyWorkLimit} hrs — Exceso: <strong>${this.laboralOverflowHours.toFixed(1)} hrs/sem</strong></p>` : ''}
+        ${this.hasExtralaboralOverflow ? `<p style="margin:4px 0;color:#7e22ce;">Horas extralaborales: <strong>${this.totalExtralaboralWeeklyHours.toFixed(1)} hrs/sem</strong> — Límite: ${this.weeklyExtraLimit} hrs — Exceso: <strong>${this.extralaboralOverflowHours.toFixed(1)} hrs/sem</strong></p>` : ''}
+      </div>` : '';
 
     const html = `<!DOCTYPE html>
 <html lang="es">
@@ -381,6 +464,7 @@ export class Phase5Component implements OnChanges {
     </div>
   </div>
 
+  ${overflowSection}
   ${buildSection('Actividades Laborales', laboral, '#1e40af')}
   ${buildSection('Actividades Extralaborales', extralaboral, '#7e22ce')}
 

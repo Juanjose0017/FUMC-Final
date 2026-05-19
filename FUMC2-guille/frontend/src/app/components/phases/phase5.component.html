@@ -25,7 +25,119 @@
       <!-- Tab Content: Resumen General -->
       <div *ngIf="currentTab === 'resumen'" class="tab-content">
         <h4 class="section-subtitle">Resumen General</h4>
-        
+
+        <!-- ═══ Panel de Análisis de Carga Semanal ═══ -->
+        <div class="carga-panel">
+
+          <!-- Laborales -->
+          <div class="carga-card" [class.carga-ok]="!hasLaboralOverflow" [class.carga-warn]="hasLaboralOverflow">
+            <div class="carga-header">
+              <div class="carga-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+                Carga Laboral Semanal
+              </div>
+              <div class="carga-badge" [class.badge-ok]="!hasLaboralOverflow" [class.badge-warn]="hasLaboralOverflow">
+                {{ hasLaboralOverflow ? '⚠ Excede límite' : '✓ Dentro del límite' }}
+              </div>
+            </div>
+            <div class="carga-numbers">
+              <div class="carga-stat">
+                <span class="carga-stat-label">Total actividades</span>
+                <span class="carga-stat-value">{{ totalLaboralWeeklyHours | number:'1.1-1' }} horas</span>
+              </div>
+              <div class="carga-stat">
+                <span class="carga-stat-label">Límite (Fase 1)</span>
+                <span class="carga-stat-value">{{ weeklyWorkLimit | number:'1.0-0' }} horas</span>
+              </div>
+              <div class="carga-stat" *ngIf="hasLaboralOverflow">
+                <span class="carga-stat-label">Horas adicionales</span>
+                <span class="carga-stat-value overflow-val">+{{ laboralOverflowHours | number:'1.1-1' }} horas</span>
+              </div>
+            </div>
+            <!-- Barra de uso -->
+            <div class="carga-bar-bg">
+              <div class="carga-bar-fill"
+                [class.fill-ok]="!hasLaboralOverflow"
+                [class.fill-warn]="hasLaboralOverflow"
+                [style.width.%]="laboralUsagePercent">
+              </div>
+            </div>
+            <div class="carga-bar-label">
+              <span>0</span>
+              <span>{{ weeklyWorkLimit > 0 ? (laboralUsagePercent | number:'1.0-0') + '% del límite' : 'Sin límite definido' }}</span>
+              <span>{{ weeklyWorkLimit }} horas</span>
+            </div>
+            <!-- Actividades desbordadas -->
+            <div *ngIf="hasLaboralOverflow" class="overflow-activities">
+              <div class="overflow-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Actividades que generan horas adicionales:
+              </div>
+              <div *ngFor="let item of laboralActivitiesWithOverflow">
+                <div *ngIf="item.isOverflow" class="overflow-item">
+                  <span class="overflow-dot"></span>
+                  <span>{{ item.activity.description }}</span>
+                  <span class="overflow-hrs">+{{ item.weeklyHours | number:'1.1-1' }} horas/sem</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extralaborales -->
+          <div class="carga-card" [class.carga-ok]="!hasExtralaboralOverflow" [class.carga-warn]="hasExtralaboralOverflow">
+            <div class="carga-header">
+              <div class="carga-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                Carga Extralaboral Semanal
+              </div>
+              <div class="carga-badge" [class.badge-ok]="!hasExtralaboralOverflow" [class.badge-warn]="hasExtralaboralOverflow">
+                {{ hasExtralaboralOverflow ? '⚠ Excede límite' : '✓ Dentro del límite' }}
+              </div>
+            </div>
+            <div class="carga-numbers">
+              <div class="carga-stat">
+                <span class="carga-stat-label">Total actividades</span>
+                <span class="carga-stat-value">{{ totalExtralaboralWeeklyHours | number:'1.1-1' }} horas</span>
+              </div>
+              <div class="carga-stat">
+                <span class="carga-stat-label">Límite (Fase 1)</span>
+                <span class="carga-stat-value">{{ weeklyExtraLimit | number:'1.0-0' }} horas</span>
+              </div>
+              <div class="carga-stat" *ngIf="hasExtralaboralOverflow">
+                <span class="carga-stat-label">Fuera de horario</span>
+                <span class="carga-stat-value overflow-val">+{{ extralaboralOverflowHours | number:'1.1-1' }} horas</span>
+              </div>
+            </div>
+            <div class="carga-bar-bg">
+              <div class="carga-bar-fill"
+                [class.fill-ok]="!hasExtralaboralOverflow"
+                [class.fill-warn]="hasExtralaboralOverflow"
+                [style.width.%]="extralaboralUsagePercent">
+              </div>
+            </div>
+            <div class="carga-bar-label">
+              <span>0</span>
+              <span>{{ weeklyExtraLimit > 0 ? (extralaboralUsagePercent | number:'1.0-0') + '% del límite' : 'Sin límite definido' }}</span>
+              <span>{{ weeklyExtraLimit }} horas</span>
+            </div>
+            <div *ngIf="hasExtralaboralOverflow" class="overflow-activities">
+              <div class="overflow-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Actividades fuera de horario extralaboral:
+              </div>
+              <div *ngFor="let item of extralaboralActivitiesWithOverflow">
+                <div *ngIf="item.isOverflow" class="overflow-item">
+                  <span class="overflow-dot"></span>
+                  <span>{{ item.activity.description }}</span>
+                  <span class="overflow-hrs">+{{ item.weeklyHours | number:'1.1-1' }} horas/sem</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- ═══ Fin Panel Análisis ═══ -->
+
         <!-- Laboral Summary -->
       <h4 class="section-subtitle">Actividades Laborales</h4>
       <div class="table-responsive">
@@ -39,6 +151,7 @@
                   <th>Tiempo (Min)</th>
                   <th>Min/Día</th>
                   <th>Min/Semana</th>
+                  <th class="col-hrs-sem">Horas/Sem</th>
                   <th>Min/Quincena</th>
                   <th>Min/Mes</th>
                   <th>Min/Trimestre</th>
@@ -59,6 +172,9 @@
                   <td>{{ activity.timeValue }}</td>
                   <td>{{ calculateTime(activity, 'DIA') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'SEMANA') | number:'1.0-0' }}</td>
+                  <td class="cell-hrs-sem">
+                    <span class="hrs-sem-badge">{{ (calculateTime(activity, 'SEMANA') / 60) | number:'1.2-2' }} horas</span>
+                  </td>
                   <td>{{ calculateTime(activity, 'QUINCENA') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'MES') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'TRIMESTRE') | number:'1.0-0' }}</td>
@@ -69,6 +185,9 @@
                   <td colspan="5" style="text-align: right;"><strong>Total Minutos:</strong></td>
                   <td><strong>{{ getTotalMinutes('LABORAL', 'DIA') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('LABORAL', 'SEMANA') | number:'1.0-0' }}</strong></td>
+                  <td class="cell-hrs-sem">
+                    <span class="hrs-sem-badge hrs-sem-total">{{ (getTotalMinutes('LABORAL', 'SEMANA') / 60) | number:'1.2-2' }} horas</span>
+                  </td>
                   <td><strong>{{ getTotalMinutes('LABORAL', 'QUINCENA') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('LABORAL', 'MES') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('LABORAL', 'TRIMESTRE') | number:'1.0-0' }}</strong></td>
@@ -79,6 +198,7 @@
                   <td colspan="5" style="text-align: right;"><strong>Total Horas:</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'DIA')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'SEMANA')) }}</strong></td>
+                  <td class="cell-hrs-sem"></td>
                   <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'QUINCENA')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'MES')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('LABORAL', 'TRIMESTRE')) }}</strong></td>
@@ -102,6 +222,7 @@
                   <th>Tiempo (Min)</th>
                   <th>Min/Día</th>
                   <th>Min/Semana</th>
+                  <th class="col-hrs-sem col-hrs-extra">Horas/Sem</th>
                   <th>Min/Quincena</th>
                   <th>Min/Mes</th>
                   <th>Min/Trimestre</th>
@@ -122,6 +243,9 @@
                   <td>{{ activity.timeValue }}</td>
                   <td>{{ calculateTime(activity, 'DIA') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'SEMANA') | number:'1.0-0' }}</td>
+                  <td class="cell-hrs-sem cell-hrs-extra">
+                    <span class="hrs-sem-badge hrs-extra-badge">{{ (calculateTime(activity, 'SEMANA') / 60) | number:'1.2-2' }} horas</span>
+                  </td>
                   <td>{{ calculateTime(activity, 'QUINCENA') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'MES') | number:'1.0-0' }}</td>
                   <td>{{ calculateTime(activity, 'TRIMESTRE') | number:'1.0-0' }}</td>
@@ -132,6 +256,9 @@
                   <td colspan="5" style="text-align: right;"><strong>Total Minutos:</strong></td>
                   <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'DIA') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'SEMANA') | number:'1.0-0' }}</strong></td>
+                  <td class="cell-hrs-sem cell-hrs-extra">
+                    <span class="hrs-sem-badge hrs-extra-badge hrs-sem-total">{{ (getTotalMinutes('EXTRALABORAL', 'SEMANA') / 60) | number:'1.2-2' }} horas</span>
+                  </td>
                   <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'QUINCENA') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'MES') | number:'1.0-0' }}</strong></td>
                   <td><strong>{{ getTotalMinutes('EXTRALABORAL', 'TRIMESTRE') | number:'1.0-0' }}</strong></td>
@@ -142,6 +269,7 @@
                   <td colspan="5" style="text-align: right;"><strong>Total Horas:</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'DIA')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'SEMANA')) }}</strong></td>
+                  <td class="cell-hrs-sem cell-hrs-extra"></td>
                   <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'QUINCENA')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'MES')) }}</strong></td>
                   <td><strong>{{ formatHours(getTotalMinutes('EXTRALABORAL', 'TRIMESTRE')) }}</strong></td>
@@ -407,7 +535,7 @@
                 </span>
                 <div class="metric-info">
                   <span class="metric-title">Dedic. Anual</span>
-                  <span class="metric-value">{{ calculateAnnualTime(activity) / 60 | number:'1.0-1' }} hrs</span>
+                  <span class="metric-value">{{ calculateAnnualTime(activity) / 60 | number:'1.0-1' }} horas</span>
                 </div>
               </div>
               <div class="metric-box highlight">

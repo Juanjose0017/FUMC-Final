@@ -2,6 +2,74 @@
       <h3>Fase 4: Asignación de Tiempo</h3>
       <p class="text-secondary">Asigne valores de tiempo (en minutos) para cada actividad.</p>
 
+      <!-- ═══ Medidores de carga semanal ═══ -->
+      <div class="carga-row">
+
+        <!-- Laboral -->
+        <div class="carga-meter" [class.meter-ok]="laboralOverflow === 0" [class.meter-warn]="laboralOverflow > 0">
+          <div class="meter-header">
+            <div class="meter-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+              Carga Laboral / Semana
+            </div>
+            <span class="meter-badge" [class.badge-ok]="laboralOverflow === 0" [class.badge-warn]="laboralOverflow > 0">
+              {{ laboralOverflow > 0 ? '⚠ Excede ' + (laboralOverflow | number:'1.1-1') + ' horas' : '✓ OK' }}
+            </span>
+          </div>
+          <div class="meter-nums">
+            <span class="meter-current" [class.num-warn]="laboralOverflow > 0">
+              {{ totalLaboralWeeklyHours | number:'1.1-1' }} horas
+            </span>
+            <span class="meter-limit">de {{ weeklyWorkLimit }} horas establecidas</span>
+          </div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill"
+              [class.fill-ok]="laboralOverflow === 0"
+              [class.fill-warn]="laboralOverflow > 0"
+              [style.width.%]="laboralUsagePercent">
+            </div>
+          </div>
+          <div *ngIf="laboralOverflow > 0" class="meter-overflow-hint">
+            {{ laboralOverflow | number:'1.1-1' }} horas/semana de horas laborales adicionales
+          </div>
+          <div *ngIf="dailyHoursLimit > 0" class="meter-daily-hint">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Límite diario: <strong>{{ dailyHoursLimit | number:'1.1-1' }} horas/día</strong> ({{ weeklyWorkLimit }} ÷ 5 días)
+          </div>
+        </div>
+
+        <!-- Extralaboral -->
+        <div class="carga-meter" [class.meter-ok]="extralaboralOverflow === 0" [class.meter-warn]="extralaboralOverflow > 0">
+          <div class="meter-header">
+            <div class="meter-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              Carga Extralaboral / Semana
+            </div>
+            <span class="meter-badge" [class.badge-ok]="extralaboralOverflow === 0" [class.badge-warn]="extralaboralOverflow > 0">
+              {{ extralaboralOverflow > 0 ? '⚠ Excede ' + (extralaboralOverflow | number:'1.1-1') + ' horas' : '✓ OK' }}
+            </span>
+          </div>
+          <div class="meter-nums">
+            <span class="meter-current" [class.num-warn]="extralaboralOverflow > 0">
+              {{ totalExtralaboralWeeklyHours | number:'1.1-1' }} horas
+            </span>
+            <span class="meter-limit">de {{ weeklyExtraLimit }} horas establecidas</span>
+          </div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill"
+              [class.fill-ok]="extralaboralOverflow === 0"
+              [class.fill-warn]="extralaboralOverflow > 0"
+              [style.width.%]="extralaboralUsagePercent">
+            </div>
+          </div>
+          <div *ngIf="extralaboralOverflow > 0" class="meter-overflow-hint">
+            {{ extralaboralOverflow | number:'1.1-1' }} horas/semana fuera del horario extralaboral
+          </div>
+        </div>
+
+      </div>
+      <!-- ═══ Fin medidores ═══ -->
+
       <!-- Laboral Activities -->
       <h4 class="section-subtitle">Actividades Laborales</h4>
       <div class="table-responsive">
@@ -18,11 +86,14 @@
                     </span>
                   </th>
                   <th width="150">Unidad</th>
+                  <th>Horas/Semana</th>
                   <th>Tiempo Anual</th>
+                  <th class="th-warn"></th>
               </tr>
           </thead>
           <tbody>
-              <tr *ngFor="let activity of laboralActivities; trackBy: trackByActivityId">
+              <tr *ngFor="let activity of laboralActivities; trackBy: trackByActivityId"
+                  [class.row-overflow]="isLaboralOverflow(activity)">
                   <td>{{ activity.description }}</td>
                   <td>{{ activity.frequency }}</td>
                   <td>
@@ -39,9 +110,30 @@
                   <td>
                       {{ activity.timeUnit }}
                   </td>
+                  <td [class.cell-overflow]="isLaboralOverflow(activity)">
+                      <strong>{{ getWeeklyHours(activity) | number:'1.2-2' }}</strong>
+                  </td>
                   <td>
                       <strong>{{ calculateAnnualTime(activity) | number:'1.1-1' }}</strong>
                   </td>
+                  <td class="td-warn">
+                    <span *ngIf="isLaboralOverflow(activity)" class="warn-icon warn-icon-red" [attr.data-tooltip]="'Horas adicionales sobre el límite semanal laboral'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                    <span *ngIf="isDailyOverflow(activity)" class="warn-icon warn-icon-yellow" [attr.data-tooltip]="'Supera el límite diario (' + (dailyHoursLimit | number:'1.1-1') + ' horas/día)'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                  </td>
+              </tr>
+              <!-- Fila de totales -->
+              <tr class="total-row" *ngIf="laboralActivities.length > 0">
+                <td colspan="5" style="text-align:right"><strong>Total semanal:</strong></td>
+                <td [class.cell-overflow]="laboralOverflow > 0">
+                  <strong>{{ totalLaboralWeeklyHours | number:'1.2-2' }} horas</strong>
+                  <span *ngIf="laboralOverflow > 0" class="overflow-delta"> (+{{ laboralOverflow | number:'1.1-1' }})</span>
+                </td>
+                <td></td>
+                <td></td>
               </tr>
           </tbody>
         </table>
@@ -63,11 +155,14 @@
                     </span>
                   </th>
                   <th width="150">Unidad</th>
+                  <th>Horas/Semana</th>
                   <th>Tiempo Anual</th>
+                  <th class="th-warn"></th>
               </tr>
           </thead>
           <tbody>
-              <tr *ngFor="let activity of extralaboralActivities; trackBy: trackByActivityId">
+              <tr *ngFor="let activity of extralaboralActivities; trackBy: trackByActivityId"
+                  [class.row-overflow]="isExtralaboralOverflow(activity)">
                   <td>{{ activity.description }}</td>
                   <td>{{ activity.frequency }}</td>
                   <td>
@@ -84,9 +179,27 @@
                   <td>
                       {{ activity.timeUnit }}
                   </td>
+                  <td [class.cell-overflow-extra]="isExtralaboralOverflow(activity)">
+                      <strong>{{ getWeeklyHours(activity) | number:'1.2-2' }}</strong>
+                  </td>
                   <td>
                       <strong>{{ calculateAnnualTime(activity) | number:'1.1-1' }}</strong>
                   </td>
+                  <td class="td-warn">
+                    <span *ngIf="isExtralaboralOverflow(activity)" class="warn-icon warn-icon-purple" [attr.data-tooltip]="'Horas fuera del horario extralaboral establecido'">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                  </td>
+              </tr>
+              <!-- Fila de totales -->
+              <tr class="total-row" *ngIf="extralaboralActivities.length > 0">
+                <td colspan="5" style="text-align:right"><strong>Total semanal:</strong></td>
+                <td [class.cell-overflow-extra]="extralaboralOverflow > 0">
+                  <strong>{{ totalExtralaboralWeeklyHours | number:'1.2-2' }} horas</strong>
+                  <span *ngIf="extralaboralOverflow > 0" class="overflow-delta-extra"> (+{{ extralaboralOverflow | number:'1.1-1' }})</span>
+                </td>
+                <td></td>
+                <td></td>
               </tr>
           </tbody>
         </table>

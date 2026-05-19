@@ -78,3 +78,228 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ═══ Medidores de carga semanal en Phase 4 ═══ */
+.carga-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+@media (max-width: 860px) {
+  .carga-row { grid-template-columns: 1fr; }
+}
+
+.carga-meter {
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 2px solid transparent;
+}
+
+.carga-meter.meter-ok {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #86efac;
+}
+
+.carga-meter.meter-warn {
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border-color: #fdba74;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.meter-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1e293b;
+}
+
+.meter-ok .meter-title svg { stroke: #16a34a; }
+.meter-warn .meter-title svg { stroke: #c2410c; }
+
+.meter-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.badge-ok  { background: #dcfce7; color: #15803d; }
+.badge-warn { background: #fee2e2; color: #b91c1c; }
+
+.meter-nums {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.meter-current {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.meter-current.num-warn { color: #c2410c; }
+
+.meter-limit {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.meter-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.meter-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.fill-ok   { background: linear-gradient(90deg, #4ade80, #16a34a); }
+.fill-warn { background: linear-gradient(90deg, #fb923c, #dc2626); }
+
+.meter-overflow-hint {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c2410c;
+}
+
+/* Filas en exceso en la tabla */
+.row-overflow {
+  background: #fff7ed !important;
+}
+
+.overflow-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.overflow-tag-extra {
+  background: #fdf4ff;
+  color: #7e22ce;
+}
+
+.cell-overflow       { color: #dc2626; font-weight: 700; }
+.cell-overflow-extra { color: #7e22ce; font-weight: 700; }
+
+.overflow-delta       { font-size: 0.8rem; color: #dc2626; font-weight: 700; }
+.overflow-delta-extra { font-size: 0.8rem; color: #7e22ce; font-weight: 700; }
+
+.total-row { background: var(--fumc-blue-light, #e0f0ff); }
+
+/* Info de límite diario dentro del medidor */
+.meter-daily-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: 0.77rem;
+  color: #1e40af;
+  border-top: 1px dashed #bfdbfe;
+  padding-top: 0.4rem;
+}
+
+.meter-daily-hint svg {
+  stroke: #1e40af;
+  flex-shrink: 0;
+}
+
+/* Etiqueta "Excede día" en tabla */
+.overflow-tag-daily {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+/* Columna de advertencia al final */
+.th-warn {
+  width: 32px;
+  padding: 0 4px !important;
+}
+
+.td-warn {
+  width: 32px;
+  text-align: center;
+  padding: 0 4px !important;
+  vertical-align: middle;
+}
+
+.warn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  position: relative;
+}
+
+/* Tooltip container */
+.warn-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: #1e293b;
+  color: white;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tooltip arrow */
+.warn-icon::before {
+  content: '';
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1e293b;
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.warn-icon:hover::after,
+.warn-icon:hover::before {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.warn-icon-red svg    { stroke: #dc2626; }
+.warn-icon-yellow svg { stroke: #ca8a04; }
+.warn-icon-purple svg { stroke: #7c3aed; }
+

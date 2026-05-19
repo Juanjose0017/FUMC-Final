@@ -748,3 +748,232 @@ td {
     border: 1px solid #d1d5db;
   }
 }
+
+/* ═══ Panel de Análisis de Carga Semanal ═══ */
+.carga-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .carga-panel { grid-template-columns: 1fr; }
+}
+
+.carga-card {
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid transparent;
+  transition: box-shadow 0.2s;
+}
+
+.carga-card.carga-ok {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+}
+
+.carga-card.carga-warn {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fdba74;
+}
+
+.carga-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.carga-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.carga-card.carga-ok .carga-title svg { stroke: #16a34a; }
+.carga-card.carga-warn .carga-title svg { stroke: #c2410c; }
+
+.carga-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.badge-ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-warn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.carga-numbers {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.carga-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.carga-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+.carga-stat-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.overflow-val {
+  color: #c2410c !important;
+}
+
+.carga-bar-bg {
+  width: 100%;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+
+.carga-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.fill-ok {
+  background: linear-gradient(90deg, #4ade80, #16a34a);
+}
+
+.fill-warn {
+  background: linear-gradient(90deg, #fb923c, #dc2626);
+}
+
+.carga-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+/* Lista de actividades en exceso */
+.overflow-activities {
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.overflow-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b91c1c;
+  margin-bottom: 0.5rem;
+}
+
+.overflow-title svg {
+  stroke: #ef4444;
+  flex-shrink: 0;
+}
+
+.overflow-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: #374151;
+  padding: 0.25rem 0;
+}
+
+.overflow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+}
+
+.overflow-hrs {
+  margin-left: auto;
+  font-weight: 700;
+  color: #dc2626;
+  white-space: nowrap;
+}
+
+/* ═══ Columna Hrs/Sem — estilo minimalista (Fase 5 Resumen) ═══ */
+.col-hrs-sem {
+  background: #e0e7ff !important;
+  color: #1e40af !important;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
+  border-left: 1px solid #c7d2fe;
+  border-right: 1px solid #c7d2fe;
+}
+
+.col-hrs-extra {
+  background: #ede9fe !important;
+  color: #5b21b6 !important;
+  border-left: 1px solid #ddd6fe;
+  border-right: 1px solid #ddd6fe;
+}
+
+.cell-hrs-sem {
+  background: #f0f4ff;
+  border-left: 1px solid #c7d2fe;
+  border-right: 1px solid #c7d2fe;
+  text-align: center;
+  color: #1e40af;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.cell-hrs-extra {
+  background: #f5f3ff;
+  border-left: 1px solid #ddd6fe;
+  border-right: 1px solid #ddd6fe;
+  color: #5b21b6;
+}
+
+.hrs-sem-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1e40af;
+}
+
+.hrs-sem-total {
+  font-size: 0.9rem;
+  color: #1e3a8a;
+}
+
+.hrs-extra-badge {
+  color: #5b21b6;
+}
+
+.hrs-extra-badge.hrs-sem-total {
+  color: #4c1d95;
+}

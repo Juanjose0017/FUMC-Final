@@ -95,4 +95,93 @@ export class Phase4Component {
     closeTooltip() {
         this.activeTooltip = null;
     }
+
+    // ─── Análisis de carga semanal ────────────────────────────────────────────
+
+    /** Convierte timeValue (min/ocurrencia) a horas/semana según la frecuencia */
+    getWeeklyHours(activity: any): number {
+        if (!activity.timeValue || !activity.timeUnit) return 0;
+        const min = Number(activity.timeValue);
+        let occPerWeek = 0;
+        switch (activity.timeUnit) {
+            case 'DIA':       occPerWeek = 5;               break;
+            case 'SEMANA':    occPerWeek = 1;               break;
+            case 'QUINCENA':  occPerWeek = 1 / 2;          break;
+            case 'MES':       occPerWeek = 1 / 4.3;        break;
+            case 'TRIMESTRE': occPerWeek = 1 / (4.3 * 3);  break;
+            case 'SEMESTRE':  occPerWeek = 1 / (4.3 * 6);  break;
+            case 'ANIO':
+            case 'AÑO':
+            case 'ANUAL':     occPerWeek = 1 / (4.3 * 12); break;
+        }
+        return (min * occPerWeek) / 60;
+    }
+
+    get totalLaboralWeeklyHours(): number {
+        return this.laboralActivities.reduce((s: number, a: any) => s + this.getWeeklyHours(a), 0);
+    }
+
+    get totalExtralaboralWeeklyHours(): number {
+        return this.extralaboralActivities.reduce((s: number, a: any) => s + this.getWeeklyHours(a), 0);
+    }
+
+    get weeklyWorkLimit(): number   { return this.form?.weeklyWorkHours  || 0; }
+    get weeklyExtraLimit(): number  { return this.form?.weeklyExtraHours || 0; }
+
+    /** Horas por día laboral = weeklyWorkHours / 5 días */
+    get dailyHoursLimit(): number {
+        return this.weeklyWorkLimit > 0 ? this.weeklyWorkLimit / 5 : 0;
+    }
+
+    /**
+     * ¿Esta actividad DIA supera las horas diarias permitidas?
+     * Solo aplica si la frecuencia es DIA.
+     */
+    isDailyOverflow(activity: any): boolean {
+        if (activity.timeUnit !== 'DIA' || this.dailyHoursLimit === 0) return false;
+        return Number(activity.timeValue) > this.dailyHoursLimit * 60;
+    }
+
+    get laboralOverflow(): number {
+        const d = this.totalLaboralWeeklyHours - this.weeklyWorkLimit;
+        return d > 0 ? d : 0;
+    }
+
+    get extralaboralOverflow(): number {
+        const d = this.totalExtralaboralWeeklyHours - this.weeklyExtraLimit;
+        return d > 0 ? d : 0;
+    }
+
+    get laboralUsagePercent(): number {
+        if (this.weeklyWorkLimit === 0) return 0;
+        return Math.min((this.totalLaboralWeeklyHours / this.weeklyWorkLimit) * 100, 100);
+    }
+
+    get extralaboralUsagePercent(): number {
+        if (this.weeklyExtraLimit === 0) return 0;
+        return Math.min((this.totalExtralaboralWeeklyHours / this.weeklyExtraLimit) * 100, 100);
+    }
+
+    /** ¿Esta actividad laboral, acumulada, supera el límite? */
+    isLaboralOverflow(activity: any): boolean {
+        if (this.weeklyWorkLimit === 0) return false;
+        let acc = 0;
+        for (const a of this.laboralActivities) {
+            acc += this.getWeeklyHours(a);
+            if (a.id === activity.id) break;
+        }
+        return acc > this.weeklyWorkLimit;
+    }
+
+    /** ¿Esta actividad extralaboral, acumulada, supera el límite? */
+    isExtralaboralOverflow(activity: any): boolean {
+        if (this.weeklyExtraLimit === 0) return false;
+        let acc = 0;
+        for (const a of this.extralaboralActivities) {
+            acc += this.getWeeklyHours(a);
+            if (a.id === activity.id) break;
+        }
+        return acc > this.weeklyExtraLimit;
+    }
 }
+
