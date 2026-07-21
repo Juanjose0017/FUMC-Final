@@ -55,7 +55,7 @@ export class ExportService {
 
         // General Info Sheet
         const generalInfo = [
-            ['Formulario de Desempeño - FUMC'],
+            ['Gestión del Rendimiento - FUMC'],
             [''],
             ['Usuario', userName],
             ['Año', formData.year],

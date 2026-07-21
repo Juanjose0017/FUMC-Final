@@ -399,7 +399,7 @@ export class Phase5Component implements OnChanges {
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reporte Evaluación de Desempeño</title>
+  <title>Reporte Gestión del Rendimiento</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',Arial,sans-serif;font-size:11px;color:#111827;background:white;padding:1.5rem 2rem}
@@ -428,7 +428,7 @@ export class Phase5Component implements OnChanges {
   <div class="rh">
     <img src="${logoUrl}" alt="Logo" onerror="this.style.display='none'">
     <div>
-      <h1>Evaluación de Desempeño ${this.form?.year || ''} &nbsp;<span style="font-size:12px;color:#6b7280;font-weight:400">#${String(this.form?.id || '').padStart(5,'0')}</span></h1>
+      <h1>Gestión del Rendimiento ${this.form?.year || ''} &nbsp;<span style="font-size:12px;color:#6b7280;font-weight:400">#${String(this.form?.id || '').padStart(5,'0')}</span></h1>
       <div class="meta">
         <span><strong>Empresa:</strong> ${this.form?.empresa || '-'}</span>
         <span><strong>Área:</strong> ${this.form?.area || '-'}</span>
