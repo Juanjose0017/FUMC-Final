@@ -69,6 +69,14 @@
         <span class="user-name">{{ currentUser?.fullName || currentUser?.username }}</span>
         <span class="user-role">{{ currentUser?.role | roleTranslate }}</span>
       </div>
+      <button (click)="openMyPasswordModal()" class="btn-sidebar-password">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        Cambiar mi contraseña
+      </button>
       <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
     </div>
   </aside>
@@ -272,6 +280,24 @@
           </div>
 
           <div class="details-actions">
+            <button (click)="openPasswordModal(selectedUser)" class="btn btn-password full-width">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Cambiar Contraseña
+            </button>
+
+            <button (click)="openEditUserModal(selectedUser)" class="btn btn-secondary-edit full-width">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              Editar Datos
+            </button>
+
             <button *ngIf="selectedUser.role !== 'ADMIN'" (click)="promoteUser(selectedUser)"
               class="btn btn-primary full-width">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -426,5 +452,230 @@
   <!-- Form Preview Modal -->
   <app-form-preview *ngIf="showPreviewModal" [formData]="previewFormData"
     (closeModal)="closePreviewModal()"></app-form-preview>
+
+  <!-- Modal: Cambiar Contraseña de Usuario (Admin) -->
+  <div class="modal-backdrop" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+    <div class="modal-card modal-compact" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge modal-icon-key">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <div>
+            <h3>Cambiar Contraseña</h3>
+            <p class="modal-subtitle">Asignar nueva contraseña para <strong>{{ '@' + selectedUserForPassword?.username }}</strong></p>
+          </div>
+        </div>
+        <button (click)="closePasswordModal()" class="btn-modal-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="target-user-info-banner">
+          <div class="target-avatar">{{ getInitials(selectedUserForPassword) }}</div>
+          <div class="target-user-texts">
+            <span class="target-name">{{ getFullName(selectedUserForPassword) }}</span>
+            <span class="target-role-badge role-{{ selectedUserForPassword?.role }}">{{ selectedUserForPassword?.role | roleTranslate }}</span>
+          </div>
+        </div>
+
+        <div class="password-tools-bar">
+          <span class="tools-label">¿Generar una clave automática?</span>
+          <button type="button" (click)="generateRandomPassword()" class="btn-tool-generate">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            Generar Clave Segura
+          </button>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Nueva Contraseña <span class="req">*</span></label>
+          <div class="input-with-actions">
+            <input [type]="showAdminPasswordText ? 'text' : 'password'"
+              [(ngModel)]="adminNewPassword"
+              placeholder="Mínimo 6 caracteres"
+              class="form-control-modern" />
+            <div class="input-action-buttons">
+              <button type="button" class="btn-input-action" (click)="showAdminPasswordText = !showAdminPasswordText" [title]="showAdminPasswordText ? 'Ocultar' : 'Mostrar'">
+                <svg *ngIf="!showAdminPasswordText" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg *ngIf="showAdminPasswordText" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+              <button *ngIf="adminNewPassword" type="button" class="btn-input-action" (click)="copyToken(adminNewPassword)" title="Copiar contraseña">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Confirmar Nueva Contraseña <span class="req">*</span></label>
+          <div class="input-with-actions">
+            <input [type]="showAdminPasswordText ? 'text' : 'password'"
+              [(ngModel)]="adminConfirmPassword"
+              placeholder="Repita la nueva contraseña"
+              class="form-control-modern" />
+          </div>
+          <div *ngIf="adminConfirmPassword && adminNewPassword !== adminConfirmPassword" class="field-error-text">
+            Las contraseñas no coinciden
+          </div>
+        </div>
+
+        <div class="security-tip-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>La nueva contraseña se activará de inmediato para el usuario sin requerir confirmación por correo electrónico.</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="closePasswordModal()" class="btn-modal-cancel">Cancelar</button>
+        <button (click)="submitChangePasswordByAdmin()" [disabled]="isChangingPassword || !adminNewPassword || adminNewPassword !== adminConfirmPassword" class="btn-modal-save">
+          <span *ngIf="!isChangingPassword">Guardar Contraseña</span>
+          <span *ngIf="isChangingPassword">Guardando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Información de Usuario (Admin) -->
+  <div class="modal-backdrop" *ngIf="showEditUserModal" (click)="closeEditUserModal()">
+    <div class="modal-card modal-medium" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge modal-icon-edit">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+          </div>
+          <div>
+            <h3>Editar Usuario</h3>
+            <p class="modal-subtitle">Modificar datos personales y rol del usuario</p>
+          </div>
+        </div>
+        <button (click)="closeEditUserModal()" class="btn-modal-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-form-grid">
+          <div class="form-group-modal">
+            <label>Primer Nombre <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="editUserForm.firstName" placeholder="Ej: Juan" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Segundo Nombre</label>
+            <input type="text" [(ngModel)]="editUserForm.secondName" placeholder="Ej: José (Opcional)" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Primer Apellido <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="editUserForm.firstLastName" placeholder="Ej: Pérez" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Segundo Apellido <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="editUserForm.secondLastName" placeholder="Ej: Gómez" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Cédula de Ciudadanía <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="editUserForm.cedula" placeholder="Ej: 1002345678" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Correo Electrónico <span class="req">*</span></label>
+            <input type="email" [(ngModel)]="editUserForm.email" placeholder="Ej: usuario@fumc.edu.co" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Nombre de Usuario <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="editUserForm.username" placeholder="Ej: juan.perez5678" class="form-control-modern" />
+          </div>
+          <div class="form-group-modal">
+            <label>Rol en el Sistema <span class="req">*</span></label>
+            <select [(ngModel)]="editUserForm.role" class="form-control-modern select-role-control">
+              <option value="USER">USUARIO</option>
+              <option value="ADMIN">ADMINISTRADOR</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="closeEditUserModal()" class="btn-modal-cancel">Cancelar</button>
+        <button (click)="submitEditUser()" [disabled]="isSavingUser" class="btn-modal-save">
+          <span *ngIf="!isSavingUser">Guardar Cambios</span>
+          <span *ngIf="isSavingUser">Guardando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cambiar Mi Propia Contraseña (Cualquier usuario autenticado) -->
+  <div class="modal-backdrop" *ngIf="showMyPasswordModal" (click)="closeMyPasswordModal()">
+    <div class="modal-card modal-compact" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-icon-badge modal-icon-profile">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <div>
+            <h3>Cambiar Mi Contraseña</h3>
+            <p class="modal-subtitle">Actualiza tu contraseña de acceso a la plataforma</p>
+          </div>
+        </div>
+        <button (click)="closeMyPasswordModal()" class="btn-modal-close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group-modal">
+          <label>Contraseña Actual <span class="req">*</span></label>
+          <div class="input-with-actions">
+            <input [type]="showMyPasswordText ? 'text' : 'password'"
+              [(ngModel)]="myCurrentPassword"
+              placeholder="Ingresa tu contraseña actual"
+              class="form-control-modern" />
+            <div class="input-action-buttons">
+              <button type="button" class="btn-input-action" (click)="showMyPasswordText = !showMyPasswordText" [title]="showMyPasswordText ? 'Ocultar' : 'Mostrar'">
+                <svg *ngIf="!showMyPasswordText" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg *ngIf="showMyPasswordText" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Nueva Contraseña <span class="req">*</span></label>
+          <div class="input-with-actions">
+            <input [type]="showMyPasswordText ? 'text' : 'password'"
+              [(ngModel)]="myNewPassword"
+              placeholder="Mínimo 6 caracteres"
+              class="form-control-modern" />
+          </div>
+        </div>
+
+        <div class="form-group-modal">
+          <label>Confirmar Nueva Contraseña <span class="req">*</span></label>
+          <div class="input-with-actions">
+            <input [type]="showMyPasswordText ? 'text' : 'password'"
+              [(ngModel)]="myConfirmPassword"
+              placeholder="Repite la nueva contraseña"
+              class="form-control-modern" />
+          </div>
+          <div *ngIf="myConfirmPassword && myNewPassword !== myConfirmPassword" class="field-error-text">
+            Las contraseñas no coinciden
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="closeMyPasswordModal()" class="btn-modal-cancel">Cancelar</button>
+        <button (click)="submitMyPassword()" [disabled]="isSavingMyPassword || !myCurrentPassword || !myNewPassword || myNewPassword !== myConfirmPassword" class="btn-modal-save">
+          <span *ngIf="!isSavingMyPassword">Actualizar Contraseña</span>
+          <span *ngIf="isSavingMyPassword">Actualizando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
 </div>

@@ -47,7 +47,7 @@ export class FormContainerComponent implements OnInit {
   }
 
   get isAdmin(): boolean {
-    return this.currentUser?.role === 'ADMIN' || this.currentUser?.role === 'LIDER';
+    return this.currentUser?.role === 'ADMIN';
   }
 
   loadForm(id: number) {

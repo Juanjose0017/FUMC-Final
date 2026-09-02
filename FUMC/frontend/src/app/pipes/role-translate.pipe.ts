@@ -10,8 +10,7 @@ export class RoleTranslatePipe implements PipeTransform {
 
         const roleMap: { [key: string]: string } = {
             'ADMIN': 'ADMINISTRADOR',
-            'USER': 'USUARIO',
-            'LIDER': 'LÍDER'
+            'USER': 'USUARIO'
         };
 
         return roleMap[role.toUpperCase()] || role;

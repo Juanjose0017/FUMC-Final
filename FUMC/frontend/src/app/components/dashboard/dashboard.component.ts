@@ -28,13 +28,10 @@ export class DashboardComponent implements OnInit {
   userTab: 'all' | 'admin' | 'user' = 'all';
 
   currentUser: any;
-  isLeader: boolean = false;
   isAdmin: boolean = false;
   currentFilter: 'progress' | 'finished' | 'deleted' = 'progress';
   deleteFormId: string = '';
   registrationTokens: any[] = [];
-
-
 
   // Getter to determine current view from URL
   get currentView(): 'dashboard' | 'formats' | 'users' | 'reports' | 'processes' | 'tokens' {
@@ -68,8 +65,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
-    this.isLeader = this.currentUser?.role === 'LIDER';
-    this.isAdmin = this.currentUser?.role === 'ADMIN' || this.currentUser?.role === 'LIDER';
+    this.isAdmin = this.currentUser?.role === 'ADMIN';
     this.loadForms();
     if (this.isAdmin) {
       this.loadUsers();
@@ -485,9 +481,209 @@ export class DashboardComponent implements OnInit {
   showToast(type: any, title: string, message?: string) {
     this.notify.showToast(type, title, message);
   }
-
   showConfirm(title: string, message: string, type: any, confirmText: string, onConfirm: () => void) {
     this.notify.showConfirm(title, message, type, confirmText, onConfirm);
+  }
+
+  // Admin Password Management Modal
+  showPasswordModal: boolean = false;
+  selectedUserForPassword: any = null;
+  adminNewPassword: string = '';
+  adminConfirmPassword: string = '';
+  showAdminPasswordText: boolean = false;
+  isChangingPassword: boolean = false;
+
+  openPasswordModal(user: any) {
+    this.selectedUserForPassword = user;
+    this.adminNewPassword = '';
+    this.adminConfirmPassword = '';
+    this.showAdminPasswordText = false;
+    this.isChangingPassword = false;
+    this.showPasswordModal = true;
+  }
+
+  closePasswordModal() {
+    this.showPasswordModal = false;
+    this.selectedUserForPassword = null;
+    this.adminNewPassword = '';
+    this.adminConfirmPassword = '';
+    this.isChangingPassword = false;
+  }
+
+  generateRandomPassword() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+    let pass = 'FUMC-';
+    for (let i = 0; i < 6; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    this.adminNewPassword = pass;
+    this.adminConfirmPassword = pass;
+    this.showAdminPasswordText = true;
+    this.showToast('info', 'Contraseña generada', 'Se ha generado una contraseña segura automáticamente');
+  }
+
+  submitChangePasswordByAdmin() {
+    if (!this.selectedUserForPassword) return;
+
+    if (!this.adminNewPassword || this.adminNewPassword.trim().length < 6) {
+      this.showToast('warning', 'Contraseña inválida', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (this.adminNewPassword !== this.adminConfirmPassword) {
+      this.showToast('warning', 'No coinciden', 'Las contraseñas ingresadas no coinciden');
+      return;
+    }
+
+    this.isChangingPassword = true;
+    this.authService.changeUserPasswordByAdmin(this.selectedUserForPassword.id, this.adminNewPassword.trim()).subscribe({
+      next: () => {
+        this.isChangingPassword = false;
+        this.showToast('success', 'Contraseña actualizada', `Contraseña cambiada exitosamente para ${this.selectedUserForPassword.username}`);
+        this.closePasswordModal();
+      },
+      error: (err) => {
+        this.isChangingPassword = false;
+        console.error('Error changing user password:', err);
+        const errorMsg = err.error?.message || 'No fue posible cambiar la contraseña';
+        this.showToast('error', 'Error', errorMsg);
+      }
+    });
+  }
+
+  // Admin Edit User Modal
+  showEditUserModal: boolean = false;
+  editUserForm: any = {
+    id: null,
+    firstName: '',
+    secondName: '',
+    firstLastName: '',
+    secondLastName: '',
+    cedula: '',
+    email: '',
+    username: '',
+    role: 'USER'
+  };
+  isSavingUser: boolean = false;
+
+  openEditUserModal(user: any) {
+    this.editUserForm = {
+      id: user.id,
+      firstName: user.firstName || '',
+      secondName: user.secondName || '',
+      firstLastName: user.firstLastName || '',
+      secondLastName: user.secondLastName || '',
+      cedula: user.cedula || '',
+      email: user.email || '',
+      username: user.username || '',
+      role: user.role || 'USER'
+    };
+    this.isSavingUser = false;
+    this.showEditUserModal = true;
+  }
+
+  closeEditUserModal() {
+    this.showEditUserModal = false;
+    this.isSavingUser = false;
+  }
+
+  submitEditUser() {
+    if (!this.editUserForm.firstName?.trim() || !this.editUserForm.firstLastName?.trim() || !this.editUserForm.secondLastName?.trim()) {
+      this.showToast('warning', 'Campos requeridos', 'Por favor complete nombres y apellidos');
+      return;
+    }
+
+    if (!this.editUserForm.cedula?.trim() || !this.editUserForm.email?.trim() || !this.editUserForm.username?.trim()) {
+      this.showToast('warning', 'Campos requeridos', 'Cédula, correo y usuario son obligatorios');
+      return;
+    }
+
+    this.isSavingUser = true;
+    this.authService.updateUser(this.editUserForm.id, this.editUserForm).subscribe({
+      next: (updatedUser) => {
+        this.isSavingUser = false;
+        this.showToast('success', 'Usuario actualizado', `Datos actualizados para ${updatedUser.username}`);
+
+        // Update selected user in view
+        if (this.selectedUser && this.selectedUser.id === updatedUser.id) {
+          this.selectedUser = updatedUser;
+        }
+
+        // If current user is editing themselves
+        if (this.currentUser && this.currentUser.userId === updatedUser.id) {
+          this.currentUser.username = updatedUser.username;
+          this.currentUser.role = updatedUser.role;
+          this.currentUser.fullName = this.getFullName(updatedUser);
+          localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        }
+
+        this.loadUsers();
+        this.closeEditUserModal();
+      },
+      error: (err) => {
+        this.isSavingUser = false;
+        console.error('Error updating user:', err);
+        const errorMsg = err.error?.message || 'No fue posible actualizar el usuario';
+        this.showToast('error', 'Error', errorMsg);
+      }
+    });
+  }
+
+  // Self Password Change Modal (Any Logged In User)
+  showMyPasswordModal: boolean = false;
+  myCurrentPassword: string = '';
+  myNewPassword: string = '';
+  myConfirmPassword: string = '';
+  showMyPasswordText: boolean = false;
+  isSavingMyPassword: boolean = false;
+
+  openMyPasswordModal() {
+    this.myCurrentPassword = '';
+    this.myNewPassword = '';
+    this.myConfirmPassword = '';
+    this.showMyPasswordText = false;
+    this.isSavingMyPassword = false;
+    this.showMyPasswordModal = true;
+  }
+
+  closeMyPasswordModal() {
+    this.showMyPasswordModal = false;
+    this.myCurrentPassword = '';
+    this.myNewPassword = '';
+    this.myConfirmPassword = '';
+    this.isSavingMyPassword = false;
+  }
+
+  submitMyPassword() {
+    if (!this.myCurrentPassword) {
+      this.showToast('warning', 'Contraseña actual requerida', 'Por favor ingresa tu contraseña actual');
+      return;
+    }
+
+    if (!this.myNewPassword || this.myNewPassword.trim().length < 6) {
+      this.showToast('warning', 'Nueva contraseña inválida', 'La nueva contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (this.myNewPassword !== this.myConfirmPassword) {
+      this.showToast('warning', 'No coinciden', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    this.isSavingMyPassword = true;
+    this.authService.changeMyPassword(this.myCurrentPassword, this.myNewPassword.trim()).subscribe({
+      next: () => {
+        this.isSavingMyPassword = false;
+        this.showToast('success', 'Contraseña cambiada', 'Tu contraseña ha sido actualizada exitosamente');
+        this.closeMyPasswordModal();
+      },
+      error: (err) => {
+        this.isSavingMyPassword = false;
+        console.error('Error updating my password:', err);
+        const errorMsg = err.error?.message || 'No fue posible cambiar la contraseña. Verifica tu contraseña actual.';
+        this.showToast('error', 'Error', errorMsg);
+      }
+    });
   }
 
   getFullName(user: any): string {

@@ -56,6 +56,17 @@ export class AuthService {
         return this.http.put<any>(`${environment.apiUrl}/api/users/${userId}/role`, { role }, { headers: this.getHeaders() });
     }
 
+    updateUser(userId: number, userData: any): Observable<any> {
+        return this.http.put<any>(`${environment.apiUrl}/api/users/${userId}`, userData, { headers: this.getHeaders() });
+    }
+
+    changeUserPasswordByAdmin(userId: number, newPassword: string): Observable<any> {
+        return this.http.put<any>(`${environment.apiUrl}/api/users/${userId}/password`, { newPassword }, { headers: this.getHeaders() });
+    }
+
+    changeMyPassword(currentPassword: string, newPassword: string): Observable<any> {
+        return this.http.put<any>(`${environment.apiUrl}/api/users/profile/password`, { currentPassword, newPassword }, { headers: this.getHeaders() });
+    }
 
     deleteUser(userId: number): Observable<void> {
         return this.http.delete<void>(`${environment.apiUrl}/api/users/${userId}`, { headers: this.getHeaders() });

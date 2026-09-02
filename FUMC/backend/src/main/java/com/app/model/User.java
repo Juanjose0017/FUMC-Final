@@ -38,5 +38,5 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String role; // "USER", "LIDER", "ADMIN"
+    private String role; // "USER", "ADMIN"
 }

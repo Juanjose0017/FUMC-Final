@@ -12,8 +12,8 @@ export const adminGuard = () => {
         return router.parseUrl('/login');
     }
 
-    // Check if user is ADMIN or LIDER
-    if (user.role === 'ADMIN' || user.role === 'LIDER') {
+    // Check if user is ADMIN
+    if (user.role === 'ADMIN') {
         return true;
     }
 

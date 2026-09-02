@@ -31,8 +31,8 @@ public class FormController {
         com.app.model.User user = formService.getUserById(userId);
 
         Page<PerformanceForm> formsPage;
-        if ("ADMIN".equals(user.getRole()) || "LIDER".equals(user.getRole())) {
-            // Admin and Lider can see all forms
+        if ("ADMIN".equals(user.getRole())) {
+            // Admin can see all forms
             if ("finished".equals(filter)) {
                 formsPage = formService.getCompletedFormsPaginated(page, size);
             } else if ("progress".equals(filter)) {
@@ -138,7 +138,7 @@ public class FormController {
 
     // Deleted forms endpoints (Admin only)
     @GetMapping("/deleted")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN') or hasAuthority('LIDER')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Map<String, Object>> getDeletedForms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size) {
