@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/tokens")
-@CrossOrigin(origins = "http://192.168.1.81:4200")
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
 public class RegistrationTokenController {
 
     @Autowired

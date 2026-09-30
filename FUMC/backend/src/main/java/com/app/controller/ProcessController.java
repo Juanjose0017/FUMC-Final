@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/processes")
-@CrossOrigin(origins = "http://192.168.1.81:4200")
 public class ProcessController {
 
     @Autowired
@@ -36,7 +35,7 @@ public class ProcessController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<?> createProcess(@RequestBody Process process) {
         try {
             Process created = processService.createProcess(process);
@@ -47,7 +46,7 @@ public class ProcessController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<?> updateProcess(@PathVariable Long id, @RequestBody Process process) {
         try {
             Process updated = processService.updateProcess(id, process);
@@ -58,7 +57,7 @@ public class ProcessController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteProcess(@PathVariable Long id) {
         try {
             processService.deleteProcess(id);

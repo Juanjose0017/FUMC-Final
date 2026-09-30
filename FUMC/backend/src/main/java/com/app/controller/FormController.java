@@ -14,11 +14,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/forms")
-@CrossOrigin(origins = "http://192.168.1.81:4200")
 public class FormController {
 
     @Autowired
     FormService formService;
+
+    private boolean isAdmin(com.app.model.User user) {
+        if (user == null || user.getRole() == null) return false;
+        String r = user.getRole().trim().toUpperCase();
+        return "ADMIN".equals(r) || "ROLE_ADMIN".equals(r);
+    }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<Map<String, Object>> getForms(
@@ -31,7 +36,7 @@ public class FormController {
         com.app.model.User user = formService.getUserById(userId);
 
         Page<PerformanceForm> formsPage;
-        if ("ADMIN".equals(user.getRole())) {
+        if (isAdmin(user)) {
             // Admin can see all forms
             if ("finished".equals(filter)) {
                 formsPage = formService.getCompletedFormsPaginated(page, size);
@@ -63,7 +68,7 @@ public class FormController {
     @GetMapping("/{id}/user/{userId}")
     public ResponseEntity<PerformanceForm> getForm(@PathVariable Long id, @PathVariable Long userId) {
         com.app.model.User user = formService.getUserById(userId);
-        if ("ADMIN".equals(user.getRole())) {
+        if (isAdmin(user)) {
             return ResponseEntity.ok(formService.getFormById(id));
         }
         return ResponseEntity.ok(formService.getForm(id, userId));
@@ -112,25 +117,25 @@ public class FormController {
     }
 
     @PostMapping("/{id}/unlock")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public PerformanceForm unlockForm(@PathVariable Long id) {
         return formService.unlockForm(id);
     }
 
     @GetMapping("/consolidated")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public List<PerformanceForm> getConsolidatedReports() {
         return formService.getAllForms();
     }
 
     @GetMapping("/completed")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public List<PerformanceForm> getCompletedForms() {
         return formService.getCompletedForms();
     }
 
     @DeleteMapping("/{id}")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<String> deleteForm(@PathVariable Long id) {
         formService.deleteForm(id);
         return ResponseEntity.ok("Formulario eliminado exitosamente");
@@ -138,7 +143,7 @@ public class FormController {
 
     // Deleted forms endpoints (Admin only)
     @GetMapping("/deleted")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getDeletedForms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size) {
@@ -155,14 +160,14 @@ public class FormController {
     }
 
     @PostMapping("/{id}/restore")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<PerformanceForm> restoreForm(@PathVariable Long id) {
         PerformanceForm restored = formService.restoreForm(id);
         return ResponseEntity.ok(restored);
     }
 
     @DeleteMapping("/{id}/permanent")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAuthority('ADMIN')")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyAuthority('ADMIN', 'ROLE_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<String> permanentlyDeleteForm(@PathVariable Long id) {
         formService.permanentlyDeleteForm(id);
         return ResponseEntity.ok("Formulario eliminado permanentemente");
